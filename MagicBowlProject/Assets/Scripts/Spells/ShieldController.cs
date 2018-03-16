@@ -52,7 +52,7 @@ public class ShieldController : NetworkBehaviour, IPointerUpHandler, IPointerDow
 			shieldimg.sprite = sup;
 			transform.parent.transform.parent.transform.parent.GetComponent<ShieldPlayer>().PlayShield();
 			spellIsLocked = true;
-			GetComponent<AudioPlayer>().playice();
+			GetComponent<AudioPlayer>().playshield();
 
 		}
 	}

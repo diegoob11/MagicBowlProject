@@ -10,12 +10,16 @@ public class AudioPlayer : MonoBehaviour {
     public AudioClip punch4;
     public AudioClip fire;
     public AudioClip ice;
+	public AudioClip shield;
 
 
 
-    // Use this for initialization
-    void Start () {
-		
+
+
+	public void playshield()
+	{
+		audioPlayerSource.clip = shield;
+		audioPlayerSource.Play();
 	}
 	
 	// Update is called once per frame
