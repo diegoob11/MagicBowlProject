@@ -48,6 +48,7 @@ namespace UnityEngine.Networking
         }
         void Update()
         {
+            //Si la lista de matches no esta vacia (null) && Si el count es superiror a 0
             if (manager.matches != null && manager.matches.Count > 0 && flag == true && flag2 < 100)
             {
                 flag = false;
