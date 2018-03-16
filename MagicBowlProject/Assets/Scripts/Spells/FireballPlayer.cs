@@ -5,6 +5,7 @@ using UnityEngine.Networking;
 
 public class FireballPlayer : NetworkBehaviour
 {
+	public GameObject audioOnline;
     public GameObject particleSys; // The actual particle system for the spell
     public int damage; // Amount of damage the fireball does
 
@@ -12,6 +13,10 @@ public class FireballPlayer : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
+
+		
+
+
             foreach (Transform t in transform)
             {
                 if (t.name == "SpellCanvas(Clone)")
@@ -33,6 +38,9 @@ public class FireballPlayer : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
+
+
+
             GetComponent<PlayerController>().PlaySpellAnimation();
             CmdPlayFireball(particleSys.transform.position, particleSys.transform.eulerAngles);
         }
@@ -50,6 +58,9 @@ public class FireballPlayer : NetworkBehaviour
         // Play only if the player is not stunned
         if (!(GetComponent<PlayerController>().isStunned))
         {
+			GameObject audio = Instantiate(audioOnline) as GameObject;
+			audio.GetComponent<AudioPlayerOnline> ().playfire ();
+
             GameObject particleSysNetwork = Instantiate(particleSys) as GameObject;
             particleSysNetwork.transform.eulerAngles = rotation;
             particleSysNetwork.transform.position = position;

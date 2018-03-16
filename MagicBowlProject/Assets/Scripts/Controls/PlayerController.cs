@@ -15,11 +15,9 @@ public class PlayerController : NetworkBehaviour
 	 **/
 
     private Animator animator; // References the animator
-    public AudioSource audioSource;
     public GameObject movementJoystick; // Get the game object which controls the player movement.
     private Rigidbody rigidBody; // Player's rigidbody.
     private VirtualJoystick mover; // To get the input vector.
-
     public GameObject spellCanvasPrefab;
     private GameObject spellCanvas;
 
@@ -168,7 +166,6 @@ public class PlayerController : NetworkBehaviour
                 // Stop the running animation
                 animator.Play("Idle");
                 animator.SetBool("isRunning", isRunning);
-                audioSource.Play();
             }
         }
     }

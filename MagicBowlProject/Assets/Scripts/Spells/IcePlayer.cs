@@ -5,6 +5,7 @@ using UnityEngine.Networking;
 
 public class IcePlayer : NetworkBehaviour
 {
+	public GameObject audioOnline;
     public GameObject particleSys;
     public void PlayIce()
     {
@@ -27,6 +28,9 @@ public class IcePlayer : NetworkBehaviour
     {
         if (!(GetComponent<PlayerController>().isStunned))
         {
+			GameObject audio = Instantiate(audioOnline) as GameObject;
+			audio.GetComponent<AudioPlayerOnline> ().playice ();
+
             // Set the owner of the particle system so that the spell doesn't affect the player
             particleSys.GetComponent<IceLifetime>().owner = gameObject.tag;
             GameObject particleSysNetwork = Instantiate(particleSys) as GameObject;
