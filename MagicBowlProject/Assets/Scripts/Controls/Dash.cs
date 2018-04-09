@@ -7,10 +7,11 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
 public class Dash : NetworkBehaviour, IPointerUpHandler, IPointerDownHandler {
+    private Image buttonImg;
+    private Image cooldownImg;
 
-    private Image img;
-    public Sprite sup;
-    public Sprite sdown;
+    public Sprite pressedImg;
+    private Sprite releasedImg;
 
     private bool spellIsLocked = false;
     public float lockTime;
@@ -18,7 +19,11 @@ public class Dash : NetworkBehaviour, IPointerUpHandler, IPointerDownHandler {
 
     void Start()
     {
-        img = gameObject.GetComponent<Image>();
+        buttonImg = gameObject.GetComponent<Image>();
+        cooldownImg = transform.parent.Find("Cooldown").GetComponent<Image>();
+        releasedImg = buttonImg.sprite;
+
+        timeLocked = lockTime;
     }
 
     void Update()
@@ -33,7 +38,7 @@ public class Dash : NetworkBehaviour, IPointerUpHandler, IPointerDownHandler {
     {
         if (!spellIsLocked)
         {
-            img.sprite = sdown;
+            buttonImg.sprite = pressedImg;
         }
     }
 
@@ -41,25 +46,26 @@ public class Dash : NetworkBehaviour, IPointerUpHandler, IPointerDownHandler {
     {
         if (!spellIsLocked)
         {
-            img.sprite = sup;
+            buttonImg.sprite = releasedImg;
             transform.parent.transform.parent.transform.parent.GetComponent<PlayerController>().isDashing = true;
             spellIsLocked = true;
+            cooldownImg.enabled = true;
         }
     }
 
     private void LockSpell()
     {
-        img.color = new Color32(225, 225, 225, 100);
         // Basic timer.
         if (timeLocked > 0)
         {
             timeLocked -= Time.deltaTime;
+            cooldownImg.fillAmount = timeLocked / lockTime;
         }
         else
         {
+            cooldownImg.enabled = false;
             timeLocked = lockTime;
             spellIsLocked = false;
-            img.color = Color.white;
         }
     }
 }

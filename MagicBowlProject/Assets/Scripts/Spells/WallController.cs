@@ -8,18 +8,17 @@ using UnityEngine.EventSystems;
 
 public class WallController : NetworkBehaviour, IDragHandler, IPointerUpHandler, IPointerDownHandler
 {
-    private Image wallimg;
-    private Image background;
-    public Sprite bup;
-    public Sprite bdown;
-    public Sprite sup;
-    public Sprite sdown;
+    private Image buttonImg;
+    private Image anchorImg;
+    private Image cooldownImg;
     private Vector3 inputVector;
+
+    public Sprite pressedImg;
+    private Sprite releasedImg;
 
     public GameObject helper;
 
     public float angle;
-    public GameObject background2;
     public Vector3 shootDirection;
 
     private bool spellIsLocked = false;
@@ -29,11 +28,14 @@ public class WallController : NetworkBehaviour, IDragHandler, IPointerUpHandler,
     // Use this for initialization
     void Start()
     {
-        wallimg = gameObject.GetComponent<Image>();
-        background = background2.GetComponent<Image>();
-        
+        buttonImg = gameObject.GetComponent<Image>();
+        anchorImg = transform.parent.GetComponent<Image>();
+        cooldownImg = transform.parent.Find("Cooldown").GetComponent<Image>();
+
         angle = 0.0f;
         shootDirection = Vector3.zero;
+
+        releasedImg = buttonImg.sprite;
 
         helper = Instantiate(helper) as GameObject;
         helper.SetActive(false);
@@ -63,8 +65,8 @@ public class WallController : NetworkBehaviour, IDragHandler, IPointerUpHandler,
     {
         if (!spellIsLocked)
         {
-            wallimg.sprite = sdown;
-            background.sprite = bdown;
+            buttonImg.sprite = pressedImg;
+            anchorImg.enabled = true;
             helper.SetActive(true);
             OnDrag(ped);
         }
@@ -74,9 +76,9 @@ public class WallController : NetworkBehaviour, IDragHandler, IPointerUpHandler,
     {
         if (!spellIsLocked)
         {
-            wallimg.sprite = sup;
-            wallimg.rectTransform.anchoredPosition = Vector3.zero;
-            background.sprite = bup;
+            buttonImg.sprite = releasedImg;
+            buttonImg.rectTransform.anchoredPosition = Vector3.zero;
+            anchorImg.enabled = false;
 
             helper.SetActive(false);
 
@@ -93,10 +95,11 @@ public class WallController : NetworkBehaviour, IDragHandler, IPointerUpHandler,
         if (!spellIsLocked)
         {
             Vector2 pos;
-            if (RectTransformUtility.ScreenPointToLocalPointInRectangle(background.rectTransform, ped.position, ped.pressEventCamera, out pos))
+            if (RectTransformUtility.ScreenPointToLocalPointInRectangle(anchorImg.rectTransform, 
+                ped.position, ped.pressEventCamera, out pos))
             {
-                pos.x = (pos.x / background.rectTransform.sizeDelta.x);
-                pos.y = (pos.y / background.rectTransform.sizeDelta.y);
+                pos.x = (pos.x / anchorImg.rectTransform.sizeDelta.x);
+                pos.y = (pos.y / anchorImg.rectTransform.sizeDelta.y);
 
                 inputVector = new Vector3(pos.x * 4, 0, -pos.y * (1 / 0.7f));
 
@@ -105,8 +108,9 @@ public class WallController : NetworkBehaviour, IDragHandler, IPointerUpHandler,
                     inputVector = inputVector.normalized * 1.2f;
                 }
 
-                wallimg.rectTransform.anchoredPosition = new Vector3(inputVector.x * (background.rectTransform.sizeDelta.x / 6),
-                    -inputVector.z * (background.rectTransform.sizeDelta.y / 3f));
+                buttonImg.rectTransform.anchoredPosition = new Vector3(inputVector.x * 
+                    (anchorImg.rectTransform.sizeDelta.x / 6),
+                    -inputVector.z * (anchorImg.rectTransform.sizeDelta.y / 3f));
 
                 angle = Mathf.Atan2(inputVector.z, inputVector.x) * 180 / Mathf.PI;
             }
@@ -115,19 +119,18 @@ public class WallController : NetworkBehaviour, IDragHandler, IPointerUpHandler,
 
     private void LockSpell()
     {
-        wallimg.color = new Color32(225, 225, 225, 100);
         // Basic timer.
         if (timeLocked > 0)
         {
             timeLocked -= Time.deltaTime;
+            cooldownImg.fillAmount = timeLocked / lockTime;
         }
         else
         {
-            Debug.Log("entro");
             // Stun time is over.
+            cooldownImg.enabled = false;
             timeLocked = lockTime;
             spellIsLocked = false;
-            wallimg.color = Color.white;
         }
     }
 }

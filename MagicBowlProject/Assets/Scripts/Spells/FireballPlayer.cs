@@ -13,10 +13,6 @@ public class FireballPlayer : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
-
-		
-
-
             foreach (Transform t in transform)
             {
                 if (t.name == "SpellCanvas(Clone)")
@@ -38,9 +34,6 @@ public class FireballPlayer : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
-
-
-
             GetComponent<PlayerController>().PlaySpellAnimation();
             CmdPlayFireball(particleSys.transform.position, particleSys.transform.eulerAngles);
         }

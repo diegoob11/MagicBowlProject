@@ -122,7 +122,7 @@ public class PlayerController : NetworkBehaviour
     // This function is called to set the fireball spell animation
     public void PlaySpellAnimation()
     {
-        animator.Play("Spell");
+        //animator.Play("Spell");
     }
 
     //This function is called when a player is stunned
@@ -148,7 +148,7 @@ public class PlayerController : NetworkBehaviour
     {
         if (allowMove)
         {
-            mover.inputVector = GameObject.Find("MovementJoystick").GetComponent<VirtualJoystick>().inputVector;
+            mover.inputVector = GameObject.Find("Joystick").GetComponent<VirtualJoystick>().inputVector;
             transform.Translate(mover.inputVector * movementSpeed * Time.deltaTime, Space.World);
             
             if (mover.inputVector != Vector3.zero)

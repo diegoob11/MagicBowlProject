@@ -6,12 +6,13 @@ using System;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-
 public class IceController : NetworkBehaviour, IPointerUpHandler, IPointerDownHandler
 {
-    private Image iceimg;
-    public Sprite sup;
-    public Sprite sdown;
+    private Image buttonImg;
+    private Image cooldownImg;
+
+    public Sprite pressedImg;
+    private Sprite releasedImg;
 
     private bool spellIsLocked = false;
     public float lockTime;
@@ -20,7 +21,11 @@ public class IceController : NetworkBehaviour, IPointerUpHandler, IPointerDownHa
     // Use this for initialization
     void Start()
     {
-        iceimg = gameObject.GetComponent<Image>();
+        buttonImg = gameObject.GetComponent<Image>();
+        cooldownImg = transform.parent.Find("Cooldown").GetComponent<Image>();
+        releasedImg = buttonImg.sprite;
+
+        timeLocked = lockTime;
     }
 
     void Update()
@@ -35,7 +40,7 @@ public class IceController : NetworkBehaviour, IPointerUpHandler, IPointerDownHa
     {
         if (!spellIsLocked)
         {
-            iceimg.sprite = sdown;
+            buttonImg.sprite = pressedImg;
         }
     }
 
@@ -43,28 +48,28 @@ public class IceController : NetworkBehaviour, IPointerUpHandler, IPointerDownHa
     {
         if (!spellIsLocked)
         {
-            iceimg.sprite = sup;
+            buttonImg.sprite = releasedImg;
             transform.parent.transform.parent.transform.parent.GetComponent<IcePlayer>().PlayIce();
             spellIsLocked = true;
+            cooldownImg.enabled = true;
             GetComponent<AudioPlayer>().playice();
-
         }
     }
 
     private void LockSpell()
     {
-        iceimg.color = new Color32(225, 225, 225, 100);
         // Basic timer.
         if (timeLocked > 0)
         {
             timeLocked -= Time.deltaTime;
+            cooldownImg.fillAmount = timeLocked / lockTime;
         }
         else
         {
             // Stun time is over.
+            cooldownImg.enabled = false;
             timeLocked = lockTime;
             spellIsLocked = false;
-            iceimg.color = Color.white;
         }
     }
 }

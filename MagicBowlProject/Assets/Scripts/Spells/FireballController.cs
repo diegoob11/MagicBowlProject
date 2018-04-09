@@ -8,18 +8,17 @@ using UnityEngine.EventSystems;
 
 public class FireballController : NetworkBehaviour, IDragHandler, IPointerUpHandler, IPointerDownHandler
 {
-    private Image fireimg;
-    private Image background;
-    public Sprite bup;
-    public Sprite bdown;
-    public Sprite sup;
-    public Sprite sdown;
+    private Image buttonImg;
+    private Image anchorImg;
+    private Image cooldownImg;
     private Vector3 inputVector;
+
+    public Sprite pressedImg;
+    private Sprite releasedImg;
 
     public GameObject helper;
 
     public float angle;
-    public GameObject background2;
     public Vector3 shootDirection;
 
     private bool spellIsLocked = false;
@@ -29,10 +28,14 @@ public class FireballController : NetworkBehaviour, IDragHandler, IPointerUpHand
     // Use this for initialization
     void Start()
     {
-        fireimg = gameObject.GetComponent<Image>();
-        background = background2.GetComponent<Image>();
+        buttonImg = gameObject.GetComponent<Image>();
+        anchorImg = transform.parent.GetComponent<Image>();
+        cooldownImg = transform.parent.Find("Cooldown").GetComponent<Image>();
+
         angle = 0.0f;
         shootDirection = Vector3.zero;
+
+        releasedImg = buttonImg.sprite;
 
         helper = Instantiate(helper) as GameObject;
         helper.SetActive(false);
@@ -50,7 +53,8 @@ public class FireballController : NetworkBehaviour, IDragHandler, IPointerUpHand
 
         shootDirection = shootDirection.normalized * 3;
 
-        helper.transform.position = transform.parent.transform.parent.transform.parent.transform.position + new Vector3(0, 0.3f, 0);
+        helper.transform.position = transform.parent.transform.parent.transform.parent.transform.position + 
+            new Vector3(0, 0.3f, 0);
 
         if (spellIsLocked)
         {
@@ -62,8 +66,8 @@ public class FireballController : NetworkBehaviour, IDragHandler, IPointerUpHand
     {
         if (!spellIsLocked)
         {
-            fireimg.sprite = sdown;
-            background.sprite = bdown;
+            buttonImg.sprite = pressedImg;
+            anchorImg.enabled = true;
             helper.SetActive(true);
             OnDrag(ped);
         }
@@ -73,9 +77,9 @@ public class FireballController : NetworkBehaviour, IDragHandler, IPointerUpHand
     {
         if (!spellIsLocked)
         {
-            fireimg.sprite = sup;
-            fireimg.rectTransform.anchoredPosition = Vector3.zero;
-            background.sprite = bup;
+            buttonImg.sprite = releasedImg;
+            buttonImg.rectTransform.anchoredPosition = Vector3.zero;
+            anchorImg.enabled = false;
 
             helper.SetActive(false);
 
@@ -83,8 +87,8 @@ public class FireballController : NetworkBehaviour, IDragHandler, IPointerUpHand
             transform.parent.transform.parent.transform.parent.GetComponent<FireballPlayer>().PlayFireball();
 
             spellIsLocked = true;
+            cooldownImg.enabled = true;
             GetComponent<AudioPlayer>().playfire();
-
         }
     }
 
@@ -93,10 +97,11 @@ public class FireballController : NetworkBehaviour, IDragHandler, IPointerUpHand
         if (!spellIsLocked)
         {
             Vector2 pos;
-            if (RectTransformUtility.ScreenPointToLocalPointInRectangle(background.rectTransform, ped.position, ped.pressEventCamera, out pos))
+            if (RectTransformUtility.ScreenPointToLocalPointInRectangle(anchorImg.rectTransform, 
+                ped.position, ped.pressEventCamera, out pos))
             {
-                pos.x = (pos.x / background.rectTransform.sizeDelta.x);
-                pos.y = (pos.y / background.rectTransform.sizeDelta.y);
+                pos.x = (pos.x / anchorImg.rectTransform.sizeDelta.x);
+                pos.y = (pos.y / anchorImg.rectTransform.sizeDelta.y);
 
                 inputVector = new Vector3(pos.x * 4, 0, -pos.y * (1 / 0.7f));
 
@@ -105,8 +110,9 @@ public class FireballController : NetworkBehaviour, IDragHandler, IPointerUpHand
                     inputVector = inputVector.normalized * 1.2f;
                 }
 
-                fireimg.rectTransform.anchoredPosition = new Vector3(inputVector.x * (background.rectTransform.sizeDelta.x / 6),
-                    -inputVector.z * (background.rectTransform.sizeDelta.y / 3f));
+                buttonImg.rectTransform.anchoredPosition = new Vector3(inputVector.x * 
+                    (anchorImg.rectTransform.sizeDelta.x / 6), -inputVector.z * 
+                    (anchorImg.rectTransform.sizeDelta.y / 3f));
 
                 angle = Mathf.Atan2(inputVector.z, inputVector.x) * 180 / Mathf.PI;
             }
@@ -115,18 +121,18 @@ public class FireballController : NetworkBehaviour, IDragHandler, IPointerUpHand
 
     private void LockSpell()
     {
-        fireimg.color = new Color32(225, 225, 225, 100);
         // Basic timer.
         if (timeLocked > 0)
         {
             timeLocked -= Time.deltaTime;
+            cooldownImg.fillAmount = timeLocked / lockTime;
         }
         else
         {
             // Stun time is over.
+            cooldownImg.enabled = false;
             timeLocked = lockTime;
             spellIsLocked = false;
-            fireimg.color = Color.white;
         }
     }
 }

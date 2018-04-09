@@ -13,8 +13,8 @@ namespace UnityEngine.Networking
         private bool matchFound;
         private bool disconnect;
         private int iterations;
-        private int maxIterations = 1000;
-        private int playersPerRoom = 2;
+        private int maxIterations = 100;
+        private int playersPerRoom = 1;
         public bool startGame = false;
 
         void Start()

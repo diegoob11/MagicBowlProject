@@ -4,73 +4,74 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.Networking;
-using System;
 using UnityEngine.UI;
-using UnityEngine.EventSystems;
 
 
 public class ShieldController : NetworkBehaviour, IPointerUpHandler, IPointerDownHandler
 {
-	private Image shieldimg;
-	public Sprite sup;
-	public Sprite sdown;
+    private Image buttonImg;
+    private Image cooldownImg;
 
-	private bool spellIsLocked = false;
-	public float lockTime;
-	private float timeLocked;
+    public Sprite pressedImg;
+    private Sprite releasedImg;
 
-	// Use this for initialization
-	void Start()
-	{
-		shieldimg = gameObject.GetComponent<Image>();
-	}
+    private bool spellIsLocked = false;
+    public float lockTime;
+    private float timeLocked;
 
-	void Update()
-	{
-		if (spellIsLocked)
-		{
-			LockSpell();
-		}
-	}
+    // Use this for initialization
+    void Start()
+    {
+        buttonImg = gameObject.GetComponent<Image>();
+		cooldownImg = transform.parent.Find("Cooldown").GetComponent<Image>();
 
-	public virtual void OnPointerDown(PointerEventData ped)
-	{
-		if (!spellIsLocked)
-		{
-			shieldimg.sprite = sdown;
-		}
-	}
+        releasedImg = buttonImg.sprite;
 
-	public virtual void OnPointerUp(PointerEventData ped)
-	{
-		if (!spellIsLocked)
-		{
-			shieldimg.sprite = sup;
-			transform.parent.transform.parent.transform.parent.GetComponent<ShieldPlayer>().PlayShield();
-			spellIsLocked = true;
-			GetComponent<AudioPlayer>().playshield();
+        timeLocked = lockTime;
+    }
 
-		}
-	}
+    void Update()
+    {
+        if (spellIsLocked)
+        {
+            LockSpell();
+        }
+    }
 
-	private void LockSpell()
-	{
-		shieldimg.color = new Color32(225, 225, 225, 100);
-		// Basic timer.
-		if (timeLocked > 0)
-		{
-			timeLocked -= Time.deltaTime;
-		}
-		else
-		{
-			// Stun time is over.
-			timeLocked = lockTime;
-			spellIsLocked = false;
-			shieldimg.color = Color.white;
-		}
-	}
+    public virtual void OnPointerDown(PointerEventData ped)
+    {
+        if (!spellIsLocked)
+        {
+            buttonImg.sprite = pressedImg;
+        }
+    }
+
+    public virtual void OnPointerUp(PointerEventData ped)
+    {
+        if (!spellIsLocked)
+        {
+            buttonImg.sprite = releasedImg;
+            transform.parent.transform.parent.transform.parent.GetComponent<ShieldPlayer>().PlayShield();
+            spellIsLocked = true;
+			cooldownImg.enabled = true;
+            GetComponent<AudioPlayer>().playshield();
+        }
+    }
+
+    private void LockSpell()
+    {
+        // Basic timer.
+        if (timeLocked > 0)
+        {
+            timeLocked -= Time.deltaTime;
+			cooldownImg.fillAmount = timeLocked / lockTime;
+        }
+        else
+        {
+            // Stun time is over.
+			cooldownImg.enabled = false;
+            timeLocked = lockTime;
+            spellIsLocked = false;
+        }
+    }
 }
