@@ -14,7 +14,7 @@ namespace UnityEngine.Networking
         private bool disconnect;
         private int iterations;
         private int maxIterations = 100;
-        private int playersPerRoom = 1;
+        private int playersPerRoom = 2;
         public bool startGame = false;
         private int selectionIndex = 3;
 
@@ -27,10 +27,11 @@ namespace UnityEngine.Networking
             manager.StartMatchMaker();
             manager.matchMaker.ListMatches(0, 1, "", true, 0, 0, manager.OnMatchList);
 
-
+            //Accede al indice de seleccion para saber que personaje spawnear
             GameObject md = GameObject.Find("mc");
             selectionIndex = md.GetComponentInChildren<CharacterCreation>().selectionIndex;
 
+            //Selecciona a Cauac como player prefab
             if(selectionIndex == 1){
                 //manager.playerPrefab = manager.spawnPrefabs[4];
             }
@@ -63,7 +64,7 @@ namespace UnityEngine.Networking
             // que implica que lo acota a las primeras maxIterations interaciones, coge el primer match de la
             // lista y la asigna al manager, se une.
             if (manager.matches != null && manager.matches.Count > 0 && matchFound && 
-                iterations < maxIterations  && manager.numPlayers >= 1)
+                iterations < maxIterations  /*&& manager.numPlayers >= 1*/)
             {
                 matchFound = false;
                 manager.matchName = manager.matches[0].name;
