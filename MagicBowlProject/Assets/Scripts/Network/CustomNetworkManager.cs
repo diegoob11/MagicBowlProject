@@ -14,7 +14,7 @@ namespace UnityEngine.Networking
         private bool disconnect;
         private int iterations;
         private int maxIterations = 100;
-        private int playersPerRoom = 2;
+        private int minPlayersPerRoom = 1;
         public bool startGame = false;
         private int selectionIndex = 3;
 
@@ -85,7 +85,7 @@ namespace UnityEngine.Networking
                 manager.matchMaker.ListMatches(0, 1, "", true, 0, 0, manager.OnMatchList);
             }
             // Ha de ser igual a 4
-            if(manager.numPlayers >= playersPerRoom)
+            if(manager.numPlayers >= minPlayersPerRoom)
             {
                 startGame = true;
             }        

@@ -9,20 +9,12 @@ public class AudioVolume : MonoBehaviour {
 	AudioSource initialsong;
 	public Slider sliderMusic;
 
-
-	// Use this for initialization
-
-
-
 	void Awake (){ //es crida quan s'executa l'script per 1r cop
 		initialsong = (AudioSource)FindObjectOfType(typeof(AudioSource)); //troba el audio que es reproduïa en l'escena anterior(MainMenu)
-		sliderMusic.value = initialsong.volume;
+		//sliderMusic.value = initialsong.volume;
 
 	}
 		
-
-		
-
 	public void volumSong() //s'activa quan es canvia el valor de l'slider
 	{
 
