@@ -25,6 +25,6 @@ public class MainMenu : MonoBehaviour {
 	}
 
 	public void findMatch(){
-		SceneManager.LoadScene("move_goal");
+		SceneManager.LoadScene("CharacterSelection");
 	}
 }
