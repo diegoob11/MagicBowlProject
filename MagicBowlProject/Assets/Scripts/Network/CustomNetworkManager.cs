@@ -16,6 +16,7 @@ namespace UnityEngine.Networking
         private int maxIterations = 100;
         private int playersPerRoom = 1;
         public bool startGame = false;
+        private int selectionIndex = 3;
 
         void Start()
         {
@@ -25,6 +26,14 @@ namespace UnityEngine.Networking
             manager = this.GetComponent<NetworkManager>();
             manager.StartMatchMaker();
             manager.matchMaker.ListMatches(0, 1, "", true, 0, 0, manager.OnMatchList);
+
+
+            GameObject md = GameObject.Find("mc");
+            selectionIndex = md.GetComponentInChildren<CharacterCreation>().selectionIndex;
+
+            if(selectionIndex == 1){
+                //manager.playerPrefab = manager.spawnPrefabs[4];
+            }
         }
         private void OnPlayerDisconnected(NetworkPlayer player)
         {
