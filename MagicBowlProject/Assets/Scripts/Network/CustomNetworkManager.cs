@@ -13,10 +13,10 @@ namespace UnityEngine.Networking
         private bool matchFound;
         private bool disconnect;
         private int iterations;
-        private int maxIterations = 100;
-        private int minPlayersPerRoom = 1;
+        private int maxIterations;
+        private int minPlayersPerRoom;
         public bool startGame = false;
-        private int selectionIndex = 3;
+        private int selectionIndex;
 
         void Start()
         {
@@ -35,7 +35,12 @@ namespace UnityEngine.Networking
             if(selectionIndex == 1){
                 //manager.playerPrefab = manager.spawnPrefabs[4];
             }
+
+            maxIterations = 100;
+            minPlayersPerRoom = 2;
+            selectionIndex = 3;
         }
+
         private void OnPlayerDisconnected(NetworkPlayer player)
         {
             if (player == GetServerPlayer())
@@ -44,10 +49,12 @@ namespace UnityEngine.Networking
                 manager.matchMaker.DestroyMatch(manager.matches[0].networkId, 0, OnMatchDestroy);
             }
         }
+
         public void OnMatchDestroy(bool success, string extendedInfo)
         {
             // ...
         }
+
         public static NetworkPlayer GetServerPlayer()
         {
             if (Network.isClient)
@@ -57,6 +64,7 @@ namespace UnityEngine.Networking
             // not connected or not running as server
             return Network.connections[0];
         }
+
         void Update()
         {
             // Si la lista de matches no es nula && Si el count de la lista de matches es mas grande que 0 &&
@@ -64,7 +72,7 @@ namespace UnityEngine.Networking
             // que implica que lo acota a las primeras maxIterations interaciones, coge el primer match de la
             // lista y la asigna al manager, se une.
             if (manager.matches != null && manager.matches.Count > 0 && matchFound && 
-                iterations < maxIterations  /*&& manager.numPlayers >= 1*/)
+                iterations < maxIterations)
             {
                 matchFound = false;
                 manager.matchName = manager.matches[0].name;

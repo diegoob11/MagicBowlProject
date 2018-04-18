@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using System;
+
 using UnityEngine.Networking;
 
 public class PlayerController : NetworkBehaviour
@@ -41,8 +41,8 @@ public class PlayerController : NetworkBehaviour
 
     private int myPlayer; // An integer indicating which player the script is referring to.
 
-    private bool allowMove;
-    private TimeController endTime;
+    [SyncVar]
+    public int gameStarted;
 
     void Start()
     {
@@ -64,21 +64,22 @@ public class PlayerController : NetworkBehaviour
 
         isDashing = false;
 
-        allowMove = false;
+        gameStarted = 0;
 
         if (isLocalPlayer)
         {
             spellCanvas = Instantiate(spellCanvasPrefab) as GameObject;
             spellCanvas.transform.SetParent(transform);
         }
-
-        GameObject count = GameObject.Find("Time");
-        endTime = count.GetComponent<TimeController>();
     }
 
     void Update()
     {
-        allowMove = endTime.allowPlayerMovement;
+        if (isServer && globals.allowPlayerMovement)
+        {
+            gameStarted = 1;
+        }
+
         if (isLocalPlayer)
         {
             if (isDashing)
@@ -146,16 +147,17 @@ public class PlayerController : NetworkBehaviour
     // Called to move the player depending on the input vector.
     private void Move()
     {
-        if (allowMove)
+        if (gameStarted == 1)
         {
             mover.inputVector = GameObject.Find("Joystick").GetComponent<VirtualJoystick>().inputVector;
             transform.Translate(mover.inputVector * movementSpeed * Time.deltaTime, Space.World);
-            
+
             if (mover.inputVector != Vector3.zero)
             {
                 if (!isRunning)
-                    
+                {
                     animator.Play("Running");
+                }
                 isRunning = true;
                 transform.rotation = Quaternion.LookRotation(mover.inputVector);
                 animator.SetBool("isRunning", isRunning);

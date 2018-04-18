@@ -8,20 +8,18 @@ using UnityEngine.Networking;
 
 public class TimeController : MonoBehaviour
 {
-
     //aquest script va dins de Time
     //nota: els valors es tornen a reiniciar cada vegada que es carrega l'escena
-
-    private float initMinutes = 02; //2
-    private float initSseconds = 59;//59
-    private bool restart = true;
-    private float timeRestarted = 0;
+    private float initMinutes;
+    private float initSseconds;
+    private bool restart;
+    private float timeRestarted;
     private CustomNetworkManager customNetwork;  //script
     private CountdownFinished countEnd; //script
-    private bool animationInProgress = false;
-    private bool animationFinished = false;
-    public bool allowPlayerMovement = false; //accessed by PlayerController.cs
-    private bool timeCounter = false;
+    private bool animationInProgress;
+    private bool animationFinished;
+    public bool allowPlayerMovement; //accessed by PlayerController.cs
+    private bool timeCounter;
     public GameObject networkManager; //rep NetworkManager per llegir startGame de l'script
     public GameObject countdown;
     public GameObject score;
@@ -29,9 +27,19 @@ public class TimeController : MonoBehaviour
 
     void Start()
     {
-        //startGameNet = net_manag.GetComponent<CustomNetworkManager> ().startGame;
         customNetwork = networkManager.GetComponent<CustomNetworkManager>();
         countEnd = countdown.GetComponent<CountdownFinished>();
+
+        restart = true;
+
+        animationInProgress = false;
+        animationFinished = false;
+        allowPlayerMovement = false;
+        timeCounter = false;
+
+        timeRestarted = 0;
+        initSseconds = 59;
+        initMinutes = 02; 
 
         countdown.SetActive(false);
     }
@@ -39,10 +47,8 @@ public class TimeController : MonoBehaviour
     // Update is called once per frame. Nota: si un script crida l'update, no crida cap més event. L'update només es cridat en l'escena de l'script
     void Update()
     {
-        
         if (restart && customNetwork.startGame && !animationInProgress)
         { //startGame es troba a CustomNetworkManager.cs. Inicia animacio countdown
-
             //animacio 3,2,1,start https://www.youtube.com/watch?v=ZEP3lxsA-FY
             countdown.SetActive(true); //starts animation
             animationInProgress = true;
@@ -52,11 +58,12 @@ public class TimeController : MonoBehaviour
         {
             print("end: " + countEnd.countdownEnd);
             if (countEnd.countdownEnd)
-            {//has to be accessed now because before was inactive
+            { //has to be accessed now because before was inactive
                 animationFinished = true;
                 animationInProgress = false;
             }
         }
+        
         if (animationFinished)
         {
             restart = false;
