@@ -11,12 +11,14 @@ public class AudioPlayer : MonoBehaviour {
     public AudioClip fire;
     public AudioClip ice;
 	public AudioClip shield;
+    public AudioClip pedrada;
+    public AudioClip indianaJones;
 
 
 
 
 
-	public void playshield()
+    public void playshield()
 	{
 		audioPlayerSource.clip = shield;
 		audioPlayerSource.Play();
@@ -32,6 +34,18 @@ public class AudioPlayer : MonoBehaviour {
     public void playice()
     {
         audioPlayerSource.clip = ice;
+        audioPlayerSource.Play();
+    }
+
+    public void playindiana()
+    {
+        audioPlayerSource.clip = indianaJones;
+        audioPlayerSource.Play();
+    }
+
+    public void playpedrada()
+    {
+        audioPlayerSource.clip = pedrada;
         audioPlayerSource.Play();
     }
 }
