@@ -6,10 +6,11 @@ using UnityEngine.Networking;
 
 public class Stamina : NetworkBehaviour
 {
-    public float maxStamina = 100;
+    public float maxStamina;
     [SyncVar(hook = "OnChangeStamina")] public float currentStamina;
     public float recoverySpeed;
-    public Image StaminaBar;
+    public Image staminaBar;
+    private PlayerController playerController;
 
     void Start()
     {
@@ -43,6 +44,6 @@ public class Stamina : NetworkBehaviour
 
     void OnChangeStamina(float stamina)
     {
-        StaminaBar.fillAmount = stamina / maxStamina;
+        staminaBar.fillAmount = stamina / maxStamina;
     }
 }
