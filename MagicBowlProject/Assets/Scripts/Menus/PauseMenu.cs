@@ -6,10 +6,13 @@ using UnityEngine.SceneManagement;
 
 public class PauseMenu : MonoBehaviour {
 	
-	//public GameObject canvas;
+
 	// Use this for initialization
+
 	void Start () {
 		this.gameObject.SetActive(false); //note: the object has to be active in the viewport
+
+
 	}
 	
 	// Update is called once per frame
