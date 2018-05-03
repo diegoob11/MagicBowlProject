@@ -15,7 +15,9 @@ public class AudioPlayerOnline : MonoBehaviour {
 	public AudioClip punch4;
 	public AudioClip fire;
 	public AudioClip ice;
-	public AudioClip shield;
+    public AudioClip pedrada;
+    public AudioClip indianaJones;
+    public AudioClip shield;
 
 	public void playshield()
 	{
@@ -35,7 +37,21 @@ public class AudioPlayerOnline : MonoBehaviour {
 		audioPlayerSource.clip = ice;
 		audioPlayerSource.Play();
 	}
-	void Start()
+
+
+    public void playindiana()
+    {
+        audioPlayerSource.clip = indianaJones;
+        audioPlayerSource.Play();
+    }
+
+    public void playpedrada()
+    {
+        audioPlayerSource.clip = pedrada;
+        audioPlayerSource.Play();
+    }
+
+    void Start()
 	{
 		age = 0f;
 		m_MaxLifeTime = 2f;
