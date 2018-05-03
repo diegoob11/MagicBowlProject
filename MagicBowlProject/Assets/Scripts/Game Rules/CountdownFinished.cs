@@ -8,5 +8,6 @@ public class CountdownFinished : MonoBehaviour {
 
 	public void CountdownIsFinished(){ //event in Countdown.anim
 		countdownEnd = true;
+
 	}
 }

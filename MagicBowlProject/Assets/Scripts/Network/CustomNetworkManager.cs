@@ -8,7 +8,7 @@ namespace UnityEngine.Networking
 
     public class CustomNetworkManager : MonoBehaviour
     {
-
+		
         public NetworkManager manager;
         private bool matchFound;
         private bool disconnect;
@@ -20,6 +20,8 @@ namespace UnityEngine.Networking
 
         void Start()
         {
+			
+
             matchFound = true;
             iterations = 0;
             

@@ -6,6 +6,90 @@ using UnityEngine.UI;
 
 public class Timer : NetworkBehaviour
 {
+
+	//nota: els valors es tornen a reiniciar cada vegada que es carrega l'escena
+
+	private CountdownFinished countEnd; //script
+	private bool animationInProgress;
+	private bool timeCounter = false;
+	public GameObject countdown;
+	private GameObject score;
+	//public GameObject directional_light;
+	public GameObject timerCanvas;
+
+	private float minutes;
+	private float seconds;
+	[SyncVar]
+	public float timeRemaining;
+
+	[SyncVar]
+	public bool allowPlayerMovementTimer; //accessed by PlayerController.cs
+
+	private PlayerController playerController;
+
+	void Start()
+	{
+		score = GameObject.Find ("score");
+		countEnd = countdown.GetComponent<CountdownFinished>();
+		timeRemaining = 180;
+		playerController = GetComponent<PlayerController>();
+		if (isLocalPlayer)
+		{
+			timerCanvas.SetActive(true);
+		}
+	}
+	void Update()
+	{
+		//Debug.Log ("movement" + countEnd.countdownEnd);
+		if (playerController.gameStarted == 1) { //startGame es troba a CustomNetworkManager.cs. Inicia animacio countdown
+			//animacio 3,2,1,start https://www.youtube.com/watch?v=ZEP3lxsA-FY
+			countdown.SetActive (true); //starts animation
+			animationInProgress = true;
+		}
+
+		if (animationInProgress) {
+			
+
+			if (countEnd.countdownEnd) { //has to be accessed now because before was inactive
+				timeCounter = true;
+				countdown.SetActive (false);
+
+
+
+			}
+		}
+
+
+		if (isServer && timeCounter) {
+			timeRemaining -= Time.deltaTime;
+			allowPlayerMovementTimer = true;
+		}
+
+		if (timeCounter) {
+			//canvia el temps
+
+			float minutes = Mathf.Floor(timeRemaining / 60);
+			float seconds = Mathf.Floor(timeRemaining % 60);
+			string minutes2 = minutes.ToString ("00");
+			string seconds2 = seconds.ToString ("00");
+			timerCanvas.transform.GetChild(0).GetComponent<Text>().text = minutes2 + ":" + seconds2;
+
+			//acaba partida si passen 3 minuts
+			if (timeRemaining <= 0) { 
+				allowPlayerMovementTimer = false;
+				timeCounter = false;
+				//directional_light.GetComponent<Light> ().intensity = 0.1f;
+				score.GetComponent<Animator> ().Play ("ShowResults");
+				timerCanvas.SetActive(false);
+
+				//game is ended by ScoreAnimationFinished.cs
+				//reinicia els valors "private" degut a que canvia d'escena
+			}
+		}
+	}
+
+
+	/*
     public GameObject timerCanvas;
 
     private float minutes;
@@ -49,4 +133,5 @@ public class Timer : NetworkBehaviour
     {
 
     }
+    */
 }
