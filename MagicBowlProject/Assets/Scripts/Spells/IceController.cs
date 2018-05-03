@@ -18,6 +18,11 @@ public class IceController : NetworkBehaviour, IPointerUpHandler, IPointerDownHa
     public float lockTime;
     private float timeLocked;
 
+    private Transform character;
+    private GameObject HUDRange;
+
+    private float range = 3; 
+
     // Use this for initialization
     void Start()
     {
@@ -26,6 +31,9 @@ public class IceController : NetworkBehaviour, IPointerUpHandler, IPointerDownHa
         releasedImg = buttonImg.sprite;
 
         timeLocked = lockTime;
+
+        character = transform.parent.transform.parent.transform.parent;
+        HUDRange = character.GetChild(4).GetChild(0).gameObject;
     }
 
     void Update()
@@ -41,6 +49,8 @@ public class IceController : NetworkBehaviour, IPointerUpHandler, IPointerDownHa
         if (!spellIsLocked)
         {
             buttonImg.sprite = pressedImg;
+            HUDRange.transform.localScale = new Vector3(range, range, range);
+            HUDRange.SetActive(true);
         }
     }
 
@@ -49,7 +59,9 @@ public class IceController : NetworkBehaviour, IPointerUpHandler, IPointerDownHa
         if (!spellIsLocked)
         {
             buttonImg.sprite = releasedImg;
-            transform.parent.transform.parent.transform.parent.GetComponent<IcePlayer>().PlayIce();
+            character.GetComponent<IcePlayer>().PlayIce();
+            
+            HUDRange.SetActive(false);
             spellIsLocked = true;
             cooldownImg.enabled = true;
             GetComponent<AudioPlayer>().playice();

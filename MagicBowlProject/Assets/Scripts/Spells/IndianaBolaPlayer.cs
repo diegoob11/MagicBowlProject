@@ -13,10 +13,6 @@ public class IndianaBolaPlayer : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
-
-
-
-
             foreach (Transform t in transform)
             {
                 if (t.name == "SpellCanvas(Clone)")
@@ -38,9 +34,6 @@ public class IndianaBolaPlayer : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
-
-
-
             GetComponent<PlayerController>().PlaySpellAnimation();
             CmdPlayIndianaBola(particleSys.transform.position, particleSys.transform.eulerAngles);
         }

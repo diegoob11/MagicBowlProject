@@ -16,14 +16,18 @@ public class FireballController : NetworkBehaviour, IDragHandler, IPointerUpHand
     public Sprite pressedImg;
     private Sprite releasedImg;
 
-    public GameObject helper;
-
     public float angle;
     public Vector3 shootDirection;
 
     private bool spellIsLocked = false;
     public float lockTime;
     private float timeLocked;
+
+    private Transform character;
+    private GameObject HUDRange;
+    private GameObject HUDArrow;
+
+    private float range = 8; 
 
     // Use this for initialization
     void Start()
@@ -37,8 +41,9 @@ public class FireballController : NetworkBehaviour, IDragHandler, IPointerUpHand
 
         releasedImg = buttonImg.sprite;
 
-        helper = Instantiate(helper) as GameObject;
-        helper.SetActive(false);
+        character = transform.parent.transform.parent.transform.parent;
+        HUDRange = character.GetChild(4).GetChild(0).gameObject;
+        HUDArrow = character.GetChild(4).GetChild(1).gameObject;
 
         timeLocked = lockTime;
     }
@@ -46,14 +51,14 @@ public class FireballController : NetworkBehaviour, IDragHandler, IPointerUpHand
     // Update is called once per frame
     void Update()
     {
-        helper.transform.eulerAngles = new Vector3(90, angle + 90, 0);
+        HUDArrow.transform.eulerAngles = new Vector3(90, angle, 0);
 
         shootDirection.x = inputVector.x;
         shootDirection.z = inputVector.z;
 
         shootDirection = shootDirection.normalized * 3;
 
-        helper.transform.position = transform.parent.transform.parent.transform.parent.transform.position + 
+        //helper.transform.position = transform.parent.transform.parent.transform.parent.transform.position + 
             new Vector3(0, 0.3f, 0);
 
         if (spellIsLocked)
@@ -66,9 +71,13 @@ public class FireballController : NetworkBehaviour, IDragHandler, IPointerUpHand
     {
         if (!spellIsLocked)
         {
+            HUDRange.transform.localScale = new Vector3(range, range, range);
+            HUDArrow.transform.localScale = new Vector3(range/2, 1, 1);
             buttonImg.sprite = pressedImg;
             anchorImg.enabled = true;
-            helper.SetActive(true);
+
+            HUDRange.SetActive(true);
+            HUDArrow.SetActive(true);
             OnDrag(ped);
         }
     }
@@ -81,10 +90,11 @@ public class FireballController : NetworkBehaviour, IDragHandler, IPointerUpHand
             buttonImg.rectTransform.anchoredPosition = Vector3.zero;
             anchorImg.enabled = false;
 
-            helper.SetActive(false);
+            HUDRange.SetActive(false);
+            HUDArrow.SetActive(false);
 
             inputVector = Vector3.zero;
-            transform.parent.transform.parent.transform.parent.GetComponent<FireballPlayer>().PlayFireball();
+            character.GetComponent<FireballPlayer>().PlayFireball();
 
             spellIsLocked = true;
             cooldownImg.enabled = true;
