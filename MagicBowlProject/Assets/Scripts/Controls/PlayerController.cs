@@ -59,8 +59,9 @@ public class PlayerController : NetworkBehaviour
 
         globals = GameObject.Find("GlobalVariables").GetComponent<GlobalVariables>();
         myPlayer = globals.currentSpawnedPlayer;
-
+        
         gameObject.tag = globals.tags[myPlayer]; // Set a tag to the player depending on the order it spawned
+        
         globals.currentSpawnedPlayer++;
         // Store the speed of the player (to use when reducing speed or so)
         originalSpeed = movementSpeed;
@@ -68,7 +69,7 @@ public class PlayerController : NetworkBehaviour
         isDashing = false;
 
         gameStarted = 0;
-
+        
         if (isLocalPlayer)
         {
             spellCanvas = Instantiate(spellCanvasPrefab) as GameObject;
@@ -164,18 +165,27 @@ public class PlayerController : NetworkBehaviour
             {
                 if (!isRunning)
                 {
-                    animator.Play("Running");
+                    if(GetComponent<PedradaPlayer>() == null){
+                        animator.Play("Running");
+                    }
                 }
                 isRunning = true;
                 transform.rotation = Quaternion.LookRotation(mover.inputVector);
-                animator.SetBool("isRunning", isRunning);
+                if(GetComponent<PedradaPlayer>() == null){
+                    animator.SetBool("isRunning", isRunning);
+                }
             }
             else
             {
                 isRunning = false;
                 // Stop the running animation
-                animator.Play("Idle");
-                animator.SetBool("isRunning", isRunning);
+                //Check Cauac
+                if(GetComponent<PedradaPlayer>() == null){
+                    animator.Play("Idle");
+                    animator.SetBool("isRunning", isRunning);
+                }
+                
+                
             }
         }
     }

@@ -31,7 +31,7 @@ namespace UnityEngine.Networking
 
             //Accede al indice de seleccion para saber que personaje spawnear
             GameObject md = GameObject.Find("mc");
-            selectionIndex = md.GetComponentInChildren<CharacterCreation>().selectionIndex;
+            //selectionIndex = md.GetComponentInChildren<CharacterCreation>().selectionIndex;
 
             //Selecciona a Cauac como player prefab
             if(selectionIndex == 1){
@@ -39,7 +39,7 @@ namespace UnityEngine.Networking
             }
 
             maxIterations = 100;
-            minPlayersPerRoom = 2;
+            minPlayersPerRoom = 1;
             selectionIndex = 3;
         }
 
@@ -76,11 +76,19 @@ namespace UnityEngine.Networking
             if (manager.matches != null && manager.matches.Count > 0 && matchFound && 
                 iterations < maxIterations)
             {
+                // matchFound = false;
+                // manager.matchName = manager.matches[0].name;
+                // manager.matchSize = (uint)manager.matches[0].currentSize;
+                // manager.matchMaker.JoinMatch(manager.matches[0].networkId, "", "", "", 0, 0, 
+                //     manager.OnMatchJoined);
+
+                manager.matchName = "MagicBowl Game";
+                manager.matchSize = 4;
+                manager.matchMaker.CreateMatch(manager.matchName, manager.matchSize, true, "", "", "", 0,
+                     0, manager.OnMatchCreate);
                 matchFound = false;
-                manager.matchName = manager.matches[0].name;
-                manager.matchSize = (uint)manager.matches[0].currentSize;
-                manager.matchMaker.JoinMatch(manager.matches[0].networkId, "", "", "", 0, 0, 
-                    manager.OnMatchJoined);
+
+                manager.matchMaker.ListMatches(0, 1, "", true, 0, 0, manager.OnMatchList);
             }
             //Si ha hecho mas de maxIterations iteraciones, y no ha encontrado partida (matchFound == true), 
             // crea la partida.

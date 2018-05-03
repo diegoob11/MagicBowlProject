@@ -52,6 +52,7 @@ public class IndianaBolaPlayer : NetworkBehaviour
         if (!(GetComponent<PlayerController>().isStunned))
         {
             GameObject audio = Instantiate(audioOnline) as GameObject;
+            
             audio.GetComponent<AudioPlayerOnline>().playindiana();
 
             GameObject particleSysNetwork = Instantiate(particleSys) as GameObject;
