@@ -82,6 +82,7 @@ public class CharacterCreation : MonoBehaviour
         DontDestroyOnLoad(GameObject.Find("mc"));
 
         SceneManager.LoadScene("move_goal");
+        
         foreach (GameObject model in models)
         {
             model.SetActive(false);

@@ -8,34 +8,42 @@ using UnityEngine.EventSystems;
 
 public class IndianaBolaController : NetworkBehaviour, IDragHandler, IPointerUpHandler, IPointerDownHandler
 {
-    private Image bolaImg;
-    private Image background;
-    public Sprite bup;
-    public Sprite bdown;
-    public Sprite sup;
-    public Sprite sdown;
+    private Image buttonImg;
+    private Image anchorImg;
+    private Image cooldownImg;
     private Vector3 inputVector;
 
-    public GameObject helper;
+    public Sprite pressedImg;
+    private Sprite releasedImg;
 
     public float angle;
-    public GameObject background2;
     public Vector3 shootDirection;
 
     private bool spellIsLocked = false;
     public float lockTime;
     private float timeLocked;
 
+    private Transform character;
+    private GameObject HUDRange;
+    private GameObject HUDArrow;
+
+    private float range = 9;
+
     // Use this for initialization
     void Start()
     {
-        bolaImg = gameObject.GetComponent<Image>();
-        background = background2.GetComponent<Image>();
+        buttonImg = gameObject.GetComponent<Image>();
+        anchorImg = transform.parent.GetComponent<Image>();
+        cooldownImg = transform.parent.Find("Cooldown").GetComponent<Image>();
+
         angle = 0.0f;
         shootDirection = Vector3.zero;
 
-        helper = Instantiate(helper) as GameObject;
-        helper.SetActive(false);
+        releasedImg = buttonImg.sprite;
+
+        character = transform.parent.transform.parent.transform.parent;
+        HUDRange = character.GetChild(4).GetChild(0).gameObject;
+        HUDArrow = character.GetChild(4).GetChild(1).gameObject;
 
         timeLocked = lockTime;
     }
@@ -43,14 +51,14 @@ public class IndianaBolaController : NetworkBehaviour, IDragHandler, IPointerUpH
     // Update is called once per frame
     void Update()
     {
-        helper.transform.eulerAngles = new Vector3(90, angle + 90, 0);
+        HUDArrow.transform.eulerAngles = new Vector3(90, angle, 0);
 
         shootDirection.x = inputVector.x;
         shootDirection.z = inputVector.z;
 
         shootDirection = shootDirection.normalized * 3;
 
-        helper.transform.position = transform.parent.transform.parent.transform.parent.transform.position + new Vector3(0, 0.3f, 0);
+        //helper.transform.position = transform.parent.transform.parent.transform.parent.transform.position + new Vector3(0, 0.3f, 0);
 
         if (spellIsLocked)
         {
@@ -62,9 +70,13 @@ public class IndianaBolaController : NetworkBehaviour, IDragHandler, IPointerUpH
     {
         if (!spellIsLocked)
         {
-            bolaImg.sprite = sdown;
-            background.sprite = bdown;
-            helper.SetActive(true);
+            HUDRange.transform.localScale = new Vector3(range, range, range);
+            HUDArrow.transform.localScale = new Vector3(range / 2, 1, 1);
+            buttonImg.sprite = pressedImg;
+            anchorImg.enabled = true;
+
+            HUDRange.SetActive(true);
+            HUDArrow.SetActive(true);
             OnDrag(ped);
         }
     }
@@ -73,18 +85,19 @@ public class IndianaBolaController : NetworkBehaviour, IDragHandler, IPointerUpH
     {
         if (!spellIsLocked)
         {
-            bolaImg.sprite = sup;
-            bolaImg.rectTransform.anchoredPosition = Vector3.zero;
-            background.sprite = bup;
+            buttonImg.sprite = releasedImg;
+            buttonImg.rectTransform.anchoredPosition = Vector3.zero;
+            anchorImg.enabled = false;
 
-            helper.SetActive(false);
+            HUDRange.SetActive(false);
+            HUDArrow.SetActive(false);
 
             inputVector = Vector3.zero;
-            transform.parent.transform.parent.transform.parent.GetComponent<IndianaBolaPlayer>().PlayIndianaBola();
+            character.GetComponent<IndianaBolaPlayer>().PlayIndianaBola();
 
             spellIsLocked = true;
+            cooldownImg.enabled = true;
             GetComponent<AudioPlayer>().playindiana();
-
         }
     }
 
@@ -93,10 +106,11 @@ public class IndianaBolaController : NetworkBehaviour, IDragHandler, IPointerUpH
         if (!spellIsLocked)
         {
             Vector2 pos;
-            if (RectTransformUtility.ScreenPointToLocalPointInRectangle(background.rectTransform, ped.position, ped.pressEventCamera, out pos))
+            if (RectTransformUtility.ScreenPointToLocalPointInRectangle(anchorImg.rectTransform,
+                ped.position, ped.pressEventCamera, out pos))
             {
-                pos.x = (pos.x / background.rectTransform.sizeDelta.x);
-                pos.y = (pos.y / background.rectTransform.sizeDelta.y);
+                pos.x = (pos.x / anchorImg.rectTransform.sizeDelta.x);
+                pos.y = (pos.y / anchorImg.rectTransform.sizeDelta.y);
 
                 inputVector = new Vector3(pos.x * 4, 0, -pos.y * (1 / 0.7f));
 
@@ -105,8 +119,8 @@ public class IndianaBolaController : NetworkBehaviour, IDragHandler, IPointerUpH
                     inputVector = inputVector.normalized * 1.2f;
                 }
 
-                bolaImg.rectTransform.anchoredPosition = new Vector3(inputVector.x * (background.rectTransform.sizeDelta.x / 6),
-                    -inputVector.z * (background.rectTransform.sizeDelta.y / 3f));
+                buttonImg.rectTransform.anchoredPosition = new Vector3(inputVector.x * (anchorImg.rectTransform.sizeDelta.x / 6),
+                    -inputVector.z * (anchorImg.rectTransform.sizeDelta.y / 3f));
 
                 angle = Mathf.Atan2(inputVector.z, inputVector.x) * 180 / Mathf.PI;
             }
@@ -115,18 +129,18 @@ public class IndianaBolaController : NetworkBehaviour, IDragHandler, IPointerUpH
 
     private void LockSpell()
     {
-        bolaImg.color = new Color32(225, 225, 225, 100);
         // Basic timer.
         if (timeLocked > 0)
         {
             timeLocked -= Time.deltaTime;
+            cooldownImg.fillAmount = timeLocked / lockTime;
         }
         else
         {
             // Stun time is over.
+            cooldownImg.enabled = false;
             timeLocked = lockTime;
             spellIsLocked = false;
-            bolaImg.color = Color.white;
         }
     }
 }

@@ -8,34 +8,41 @@ using UnityEngine.EventSystems;
 
 public class PedradaController : NetworkBehaviour, IDragHandler, IPointerUpHandler, IPointerDownHandler
 {
-    private Image piedraImg;
-    private Image background;
-    public Sprite bup;
-    public Sprite bdown;
-    public Sprite sup;
-    public Sprite sdown;
+    private Image buttonImg;
+    private Image anchorImg;
+    private Image cooldownImg;
     private Vector3 inputVector;
 
-    public GameObject helper;
+    public Sprite pressedImg;
+    private Sprite releasedImg;
 
     public float angle;
-    public GameObject background2;
     public Vector3 shootDirection;
 
     private bool spellIsLocked = false;
     public float lockTime;
     private float timeLocked;
 
+    private Transform character;
+    private GameObject HUDRange;
+    private GameObject HUDAOE;
+
+    private float range = 3;
     // Use this for initialization
     void Start()
     {
-        piedraImg = gameObject.GetComponent<Image>();
-        background = background2.GetComponent<Image>();
+        buttonImg = gameObject.GetComponent<Image>();
+        anchorImg = transform.parent.GetComponent<Image>();
+        cooldownImg = transform.parent.Find("Cooldown").GetComponent<Image>();
+
         angle = 0.0f;
         shootDirection = Vector3.zero;
 
-        helper = Instantiate(helper) as GameObject;
-        helper.SetActive(false);
+        releasedImg = buttonImg.sprite;
+
+        character = transform.parent.transform.parent.transform.parent;
+        HUDRange = character.GetChild(4).GetChild(0).gameObject;
+        HUDAOE = character.GetChild(4).GetChild(2).gameObject;
 
         timeLocked = lockTime;
     }
@@ -43,14 +50,16 @@ public class PedradaController : NetworkBehaviour, IDragHandler, IPointerUpHandl
     // Update is called once per frame
     void Update()
     {
-        helper.transform.eulerAngles = new Vector3(90, angle + 90, 0);
+        HUDAOE.transform.eulerAngles = new Vector3(90, angle, 0);
+        HUDAOE.transform.position = character.transform.position + new Vector3(Mathf.Cos(angle*Mathf.PI/180)*3,0.1f, 
+            -Mathf.Sin(angle * Mathf.PI / 180) * 3);
 
         shootDirection.x = inputVector.x;
         shootDirection.z = inputVector.z;
 
         shootDirection = shootDirection.normalized * 3;
 
-        helper.transform.position = transform.parent.transform.parent.transform.parent.transform.position + new Vector3(0, 0.3f, 0);
+        // helper.transform.position = transform.parent.transform.parent.transform.parent.transform.position + new Vector3(0, 0.3f, 0);
 
         if (spellIsLocked)
         {
@@ -62,9 +71,12 @@ public class PedradaController : NetworkBehaviour, IDragHandler, IPointerUpHandl
     {
         if (!spellIsLocked)
         {
-            piedraImg.sprite = sdown;
-            background.sprite = bdown;
-            helper.SetActive(true);
+            HUDRange.transform.localScale = new Vector3(range, range, range);
+            buttonImg.sprite = pressedImg;
+            anchorImg.enabled = true;
+
+            HUDRange.SetActive(true);
+            HUDAOE.SetActive(true);
             OnDrag(ped);
         }
     }
@@ -73,16 +85,18 @@ public class PedradaController : NetworkBehaviour, IDragHandler, IPointerUpHandl
     {
         if (!spellIsLocked)
         {
-            piedraImg.sprite = sup;
-            piedraImg.rectTransform.anchoredPosition = Vector3.zero;
-            background.sprite = bup;
+            buttonImg.sprite = releasedImg;
+            buttonImg.rectTransform.anchoredPosition = Vector3.zero;
+            anchorImg.enabled = false;
 
-            helper.SetActive(false);
+            HUDRange.SetActive(false);
+            HUDAOE.SetActive(false);
 
             inputVector = Vector3.zero;
-            transform.parent.transform.parent.transform.parent.GetComponent<PedradaPlayer>().PlayPedrada();
+            character.GetComponent<PedradaPlayer>().PlayPedrada();
 
             spellIsLocked = true;
+            cooldownImg.enabled = true;
             GetComponent<AudioPlayer>().playpedrada();
 
         }
@@ -93,10 +107,10 @@ public class PedradaController : NetworkBehaviour, IDragHandler, IPointerUpHandl
         if (!spellIsLocked)
         {
             Vector2 pos;
-            if (RectTransformUtility.ScreenPointToLocalPointInRectangle(background.rectTransform, ped.position, ped.pressEventCamera, out pos))
+            if (RectTransformUtility.ScreenPointToLocalPointInRectangle(anchorImg.rectTransform, ped.position, ped.pressEventCamera, out pos))
             {
-                pos.x = (pos.x / background.rectTransform.sizeDelta.x);
-                pos.y = (pos.y / background.rectTransform.sizeDelta.y);
+                pos.x = (pos.x / anchorImg.rectTransform.sizeDelta.x);
+                pos.y = (pos.y / anchorImg.rectTransform.sizeDelta.y);
 
                 inputVector = new Vector3(pos.x * 4, 0, -pos.y * (1 / 0.7f));
 
@@ -105,8 +119,8 @@ public class PedradaController : NetworkBehaviour, IDragHandler, IPointerUpHandl
                     inputVector = inputVector.normalized * 1.2f;
                 }
 
-                piedraImg.rectTransform.anchoredPosition = new Vector3(inputVector.x * (background.rectTransform.sizeDelta.x / 6),
-                    -inputVector.z * (background.rectTransform.sizeDelta.y / 3f));
+                buttonImg.rectTransform.anchoredPosition = new Vector3(inputVector.x * (anchorImg.rectTransform.sizeDelta.x / 6),
+                    -inputVector.z * (anchorImg.rectTransform.sizeDelta.y / 3f));
 
                 angle = Mathf.Atan2(inputVector.z, inputVector.x) * 180 / Mathf.PI;
             }
@@ -115,18 +129,18 @@ public class PedradaController : NetworkBehaviour, IDragHandler, IPointerUpHandl
 
     private void LockSpell()
     {
-        piedraImg.color = new Color32(225, 225, 225, 100);
         // Basic timer.
         if (timeLocked > 0)
         {
             timeLocked -= Time.deltaTime;
+            cooldownImg.fillAmount = timeLocked / lockTime;
         }
         else
         {
             // Stun time is over.
+            cooldownImg.enabled = false;
             timeLocked = lockTime;
             spellIsLocked = false;
-            piedraImg.color = Color.white;
         }
     }
 }

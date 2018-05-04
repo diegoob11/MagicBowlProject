@@ -41,7 +41,6 @@ public class Timer : NetworkBehaviour
         //startGame es troba a CustomNetworkManager.cs. Inicia animacio countdown
         if (playerController.gameStarted == 1 && !animationStart)
         {
-			print("Hello there!");
             //animacio 3,2,1,start https://www.youtube.com/watch?v=ZEP3lxsA-FY
             countdown.SetActive(true); //starts animation
             animationStart = true;

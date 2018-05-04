@@ -59,7 +59,7 @@ public class FireballController : NetworkBehaviour, IDragHandler, IPointerUpHand
         shootDirection = shootDirection.normalized * 3;
 
         //helper.transform.position = transform.parent.transform.parent.transform.parent.transform.position + 
-            new Vector3(0, 0.3f, 0);
+        //    new Vector3(0, 0.3f, 0);
 
         if (spellIsLocked)
         {

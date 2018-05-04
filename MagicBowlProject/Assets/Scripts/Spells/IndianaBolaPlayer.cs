@@ -8,6 +8,7 @@ public class IndianaBolaPlayer : NetworkBehaviour
     public GameObject audioOnline;
     public GameObject particleSys; // The actual particle system for the spell
     public int damage; // Amount of damage the stone does
+    private float angle;
 
     private void Update()
     {
@@ -17,7 +18,7 @@ public class IndianaBolaPlayer : NetworkBehaviour
             {
                 if (t.name == "SpellCanvasCauac(Clone)")
                 {
-                    float angle = t.GetChild(0).transform.GetChild(0).GetComponent<IndianaBolaController>().angle;
+                    angle = t.GetChild(0).transform.GetChild(0).GetComponent<IndianaBolaController>().angle;
                     Aim(angle);
                 }
             }
@@ -52,7 +53,7 @@ public class IndianaBolaPlayer : NetworkBehaviour
         if (!(GetComponent<PlayerController>().isStunned))
         {
             GameObject audio = Instantiate(audioOnline) as GameObject;
-            
+
             audio.GetComponent<AudioPlayerOnline>().playindiana();
 
             GameObject particleSysNetwork = Instantiate(particleSys) as GameObject;

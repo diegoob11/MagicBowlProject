@@ -7,12 +7,11 @@ public class ShieldPlayer : NetworkBehaviour
 {
 	public GameObject audioOnline;
 	public GameObject particleSys;
+	
 	public void PlayShield()
 	{
 		if (isLocalPlayer)
 		{
-	
-
 			GetComponent<PlayerController>().PlaySpellAnimation();
 			CmdPlayShield(transform.position + new Vector3(0, 0.1f, 0));
 		}

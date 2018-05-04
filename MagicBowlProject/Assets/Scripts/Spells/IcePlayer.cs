@@ -7,6 +7,7 @@ public class IcePlayer : NetworkBehaviour
 {
 	public GameObject audioOnline;
     public GameObject particleSys;
+    
     public void PlayIce()
     {
         if (isLocalPlayer)

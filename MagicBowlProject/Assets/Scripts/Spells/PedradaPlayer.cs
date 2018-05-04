@@ -8,18 +8,17 @@ public class PedradaPlayer : NetworkBehaviour
     public GameObject audioOnline;
     public GameObject particleSys; // The actual particle system for the spell
     public int damage; // Amount of damage the stone does
+    private float angle;
 
     private void Update()
     {
         if (isLocalPlayer)
         {
-
             foreach (Transform t in transform)
             {
                 if (t.name == "SpellCanvasCauac(Clone)")
-                {
-                    
-                    float angle = t.GetChild(1).transform.GetChild(0).GetComponent<PedradaController>().angle;
+                {   
+                    angle = t.GetChild(1).transform.GetChild(0).GetComponent<PedradaController>().angle;
                     Aim(angle);
                 }
             }
@@ -29,7 +28,8 @@ public class PedradaPlayer : NetworkBehaviour
     public void Aim(float angle)
     {
         particleSys.transform.eulerAngles = new Vector3(90, 0, 0);
-        particleSys.transform.position = transform.position + new Vector3(Mathf.Cos(angle*Mathf.PI/180)*3,3, -Mathf.Sin(angle * Mathf.PI / 180) * 3);
+        particleSys.transform.position = transform.position + new Vector3(Mathf.Cos(angle*Mathf.PI/180)*3,3, 
+            -Mathf.Sin(angle * Mathf.PI / 180) * 3);
     }
 
     public void PlayPedrada()

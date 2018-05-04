@@ -7,12 +7,11 @@ public class SorraStaminaPlayer : NetworkBehaviour
 {
     public GameObject audioOnline;
     public GameObject particleSys;
+    
     public void PlaySorrastamina()
     {
         if (isLocalPlayer)
         {
-
-
             GetComponent<PlayerController>().PlaySpellAnimation();
             CmdPlaySorraStamina(transform.position + new Vector3(0, 0.1f, 0));
         }
