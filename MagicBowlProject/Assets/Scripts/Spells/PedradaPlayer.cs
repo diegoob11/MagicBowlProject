@@ -14,14 +14,12 @@ public class PedradaPlayer : NetworkBehaviour
         if (isLocalPlayer)
         {
 
-
-
-
             foreach (Transform t in transform)
             {
-                if (t.name == "SpellCanvas(Clone)")
+                if (t.name == "SpellCanvasCauac(Clone)")
                 {
-                    float angle = t.GetChild(0).transform.GetChild(0).GetComponent<PedradaController>().angle;
+                    
+                    float angle = t.GetChild(1).transform.GetChild(0).GetComponent<PedradaController>().angle;
                     Aim(angle);
                 }
             }
@@ -38,9 +36,6 @@ public class PedradaPlayer : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
-
-
-
             GetComponent<PlayerController>().PlaySpellAnimation();
             CmdPlayPedrada(particleSys.transform.position, particleSys.transform.eulerAngles);
         }

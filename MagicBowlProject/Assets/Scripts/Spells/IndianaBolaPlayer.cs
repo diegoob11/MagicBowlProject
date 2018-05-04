@@ -15,7 +15,7 @@ public class IndianaBolaPlayer : NetworkBehaviour
         {
             foreach (Transform t in transform)
             {
-                if (t.name == "SpellCanvas(Clone)")
+                if (t.name == "SpellCanvasCauac(Clone)")
                 {
                     float angle = t.GetChild(0).transform.GetChild(0).GetComponent<IndianaBolaController>().angle;
                     Aim(angle);
