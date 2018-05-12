@@ -20,22 +20,6 @@ public class NetManagerCustom : NetworkManager
     // in the Spawn Info -> Registered Spawnable Prefabs section 
     public short playerPrefabIndex;
 
-    //Accede al indice de seleccion para saber que personaje spawnear
-    /*
-	GameObject md = GameObject.Find("mc");
-    selectionIndex = md.GetComponentInChildren<CharacterCreation>().selectionIndex;
-	//Selecciona el player prefab
-	switch (selectionIndex)
-	{
-		case 1:
-			manager.playerPrefab = manager.spawnPrefabs[1];
-			break;
-		default:
-			manager.playerPrefab = manager.spawnPrefabs[0];
-			break;
-	}
-	*/
-
     public override void OnStartServer()
     {
         NetworkServer.RegisterHandler(MsgTypes.PlayerPrefab, OnResponsePrefab);
@@ -73,4 +57,5 @@ public class NetManagerCustom : NetworkManager
         msg.controllerID = playerControllerId;
         NetworkServer.SendToClient(conn.connectionId, MsgTypes.PlayerPrefab, msg);
     }
+    
 }
