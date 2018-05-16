@@ -16,7 +16,7 @@ public class FireballPlayer : NetworkBehaviour
         {
             foreach (Transform t in transform)
             {
-                if (t.name == "SpellCanvas(Clone)")
+                if (t.name == "SpellCanvasFjalar(Clone)")
                 {
                     angle = t.GetChild(0).transform.GetChild(0).GetComponent<FireballController>().angle;
                     Aim(angle);

@@ -6,21 +6,15 @@ using System;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class SorraStaminaController : NetworkBehaviour, IDragHandler, IPointerUpHandler, IPointerDownHandler
+public class SorraStaminaController : NetworkBehaviour, IPointerUpHandler, IPointerDownHandler
 {
-    private Image sorraimg;
-    private Image background;
-    public Sprite bup;
-    public Sprite bdown;
-    public Sprite sup;
-    public Sprite sdown;
-    private Vector3 inputVector;
+    private Image buttonImg;
+    private Image cooldownImg;
 
-    public GameObject helper;
+    public Sprite pressedImg;
+    private Sprite releasedImg;
 
-    public float angle;
-    public GameObject background2;
-    public Vector3 shootDirection;
+    private Transform character;
 
     private bool spellIsLocked = false;
     public float lockTime;
@@ -29,14 +23,12 @@ public class SorraStaminaController : NetworkBehaviour, IDragHandler, IPointerUp
     // Use this for initialization
     void Start()
     {
-        sorraimg = gameObject.GetComponent<Image>();
-        background = background2.GetComponent<Image>();
+        buttonImg = gameObject.GetComponent<Image>();
+        cooldownImg = transform.parent.Find("Cooldown").GetComponent<Image>();
+        
+        releasedImg = buttonImg.sprite;
 
-        angle = 0.0f;
-        shootDirection = Vector3.zero;
-
-        helper = Instantiate(helper) as GameObject;
-        helper.SetActive(false);
+        character = transform.parent.transform.parent.transform.parent;
 
         timeLocked = lockTime;
     }
@@ -44,15 +36,6 @@ public class SorraStaminaController : NetworkBehaviour, IDragHandler, IPointerUp
     // Update is called once per frame
     void Update()
     {
-        helper.transform.eulerAngles = new Vector3(90, angle + 90, 0);
-
-        shootDirection.x = inputVector.x;
-        shootDirection.z = inputVector.z;
-
-        shootDirection = shootDirection.normalized * 3;
-
-        helper.transform.position = transform.parent.transform.parent.transform.parent.transform.position + new Vector3(0, 0.3f, 0);
-
         if (spellIsLocked)
         {
             LockSpell();
@@ -63,10 +46,7 @@ public class SorraStaminaController : NetworkBehaviour, IDragHandler, IPointerUp
     {
         if (!spellIsLocked)
         {
-            sorraimg.sprite = sdown;
-            background.sprite = bdown;
-            helper.SetActive(true);
-            OnDrag(ped);
+            buttonImg.sprite = pressedImg;
         }
     }
 
@@ -74,59 +54,28 @@ public class SorraStaminaController : NetworkBehaviour, IDragHandler, IPointerUp
     {
         if (!spellIsLocked)
         {
-            sorraimg.sprite = sup;
-            sorraimg.rectTransform.anchoredPosition = Vector3.zero;
-            background.sprite = bup;
-
-            helper.SetActive(false);
-
-            inputVector = Vector3.zero;
-
-            transform.parent.transform.parent.transform.parent.GetComponent<SorraStaminaPlayer>().PlaySorrastamina();
-
+            buttonImg.sprite = releasedImg;
+            character.GetComponent<SorraStaminaPlayer>().PlaySorrastamina();
             spellIsLocked = true;
-        }
-    }
-
-    public virtual void OnDrag(PointerEventData ped)
-    {
-        if (!spellIsLocked)
-        {
-            Vector2 pos;
-            if (RectTransformUtility.ScreenPointToLocalPointInRectangle(background.rectTransform, ped.position, ped.pressEventCamera, out pos))
-            {
-                pos.x = (pos.x / background.rectTransform.sizeDelta.x);
-                pos.y = (pos.y / background.rectTransform.sizeDelta.y);
-
-                inputVector = new Vector3(pos.x * 4, 0, -pos.y * (1 / 0.7f));
-
-                if (inputVector.magnitude > 1)
-                {
-                    inputVector = inputVector.normalized * 1.2f;
-                }
-
-               sorraimg.rectTransform.anchoredPosition = new Vector3(inputVector.x * (background.rectTransform.sizeDelta.x / 6),
-                    -inputVector.z * (background.rectTransform.sizeDelta.y / 3f));
-
-                angle = Mathf.Atan2(inputVector.z, inputVector.x) * 180 / Mathf.PI;
-            }
+			cooldownImg.enabled = true;
+            GetComponent<AudioPlayer>().playshield();
         }
     }
 
     private void LockSpell()
     {
-        sorraimg.color = new Color32(225, 225, 225, 100);
         // Basic timer.
         if (timeLocked > 0)
         {
             timeLocked -= Time.deltaTime;
+			cooldownImg.fillAmount = timeLocked / lockTime;
         }
         else
         {
             // Stun time is over.
+			cooldownImg.enabled = false;
             timeLocked = lockTime;
             spellIsLocked = false;
-            sorraimg.color = Color.white;
         }
     }
 }

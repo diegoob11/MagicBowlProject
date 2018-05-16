@@ -59,9 +59,9 @@ public class PlayerController : NetworkBehaviour
 
         globals = GameObject.Find("GlobalVariables").GetComponent<GlobalVariables>();
         myPlayer = globals.currentSpawnedPlayer;
-        
+
         gameObject.tag = globals.tags[myPlayer]; // Set a tag to the player depending on the order it spawned
-        
+
         globals.currentSpawnedPlayer++;
         // Store the speed of the player (to use when reducing speed or so)
         originalSpeed = movementSpeed;
@@ -69,7 +69,7 @@ public class PlayerController : NetworkBehaviour
         isDashing = false;
 
         gameStarted = 0;
-        
+
         if (isLocalPlayer)
         {
             spellCanvas = Instantiate(spellCanvasPrefab) as GameObject;
@@ -155,7 +155,6 @@ public class PlayerController : NetworkBehaviour
     // Called to move the player depending on the input vector.
     private void Move()
     {
-
         if (timer.allowPlayerMovementTimer)
         {
             mover.inputVector = GameObject.Find("Joystick").GetComponent<VirtualJoystick>().inputVector;
@@ -165,13 +164,15 @@ public class PlayerController : NetworkBehaviour
             {
                 if (!isRunning)
                 {
-                    if(GetComponent<PedradaPlayer>() == null){
+                    if (GetComponent<PedradaPlayer>() == null)
+                    {
                         animator.Play("Running");
                     }
                 }
                 isRunning = true;
                 transform.rotation = Quaternion.LookRotation(mover.inputVector);
-                if(GetComponent<PedradaPlayer>() == null){
+                if (GetComponent<PedradaPlayer>() == null)
+                {
                     animator.SetBool("isRunning", isRunning);
                 }
             }
@@ -180,12 +181,13 @@ public class PlayerController : NetworkBehaviour
                 isRunning = false;
                 // Stop the running animation
                 //Check Cauac
-                if(GetComponent<PedradaPlayer>() == null){
+                if (GetComponent<PedradaPlayer>() == null)
+                {
                     animator.Play("Idle");
                     animator.SetBool("isRunning", isRunning);
                 }
-                
-                
+
+
             }
         }
     }
@@ -250,6 +252,12 @@ public class PlayerController : NetworkBehaviour
         {
             case "FireBall":
                 GetComponent<Stamina>().TakeDamage(GetComponent<FireballPlayer>().damage);
+                break;
+            case "Avalanche":
+                GetComponent<Stamina>().TakeDamage(GetComponent<PedradaPlayer>().damage);
+                break;
+            case "Boulder":
+                GetComponent<Stamina>().TakeDamage(GetComponent<IndianaBolaPlayer>().damage);
                 break;
         }
     }

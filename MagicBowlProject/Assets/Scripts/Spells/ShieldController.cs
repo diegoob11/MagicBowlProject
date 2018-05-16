@@ -15,6 +15,8 @@ public class ShieldController : NetworkBehaviour, IPointerUpHandler, IPointerDow
     public Sprite pressedImg;
     private Sprite releasedImg;
 
+    private Transform character;
+
     private bool spellIsLocked = false;
     public float lockTime;
     private float timeLocked;
@@ -26,6 +28,8 @@ public class ShieldController : NetworkBehaviour, IPointerUpHandler, IPointerDow
 		cooldownImg = transform.parent.Find("Cooldown").GetComponent<Image>();
 
         releasedImg = buttonImg.sprite;
+
+        character = transform.parent.transform.parent.transform.parent;
 
         timeLocked = lockTime;
     }
@@ -51,7 +55,7 @@ public class ShieldController : NetworkBehaviour, IPointerUpHandler, IPointerDow
         if (!spellIsLocked)
         {
             buttonImg.sprite = releasedImg;
-            transform.parent.transform.parent.transform.parent.GetComponent<ShieldPlayer>().PlayShield();
+            character.GetComponent<ShieldPlayer>().PlayShield();
             spellIsLocked = true;
 			cooldownImg.enabled = true;
             GetComponent<AudioPlayer>().playshield();
