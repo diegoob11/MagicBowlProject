@@ -45,7 +45,7 @@ public class CauacPlayerController : NetworkBehaviour
     [SyncVar]
     public int gameStarted;
 
-
+    private bool serverNotSetted = true;
     void Start()
     {
         timer = GetComponent<Timer>();

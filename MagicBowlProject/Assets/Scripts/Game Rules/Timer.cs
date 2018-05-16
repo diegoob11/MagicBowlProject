@@ -69,7 +69,7 @@ public class Timer : NetworkBehaviour
             float seconds = Mathf.Floor(timeRemaining % 60);
             string minutes2 = minutes.ToString("00");
             string seconds2 = seconds.ToString("00");
-            timerCanvas.transform.GetChild(0).GetComponent<Text>().text = minutes2 + ":" + seconds2;
+            //timerCanvas.transform.GetChild(0).GetComponent<Text>().text = minutes2 + ":" + seconds2;
 
             //acaba partida si passen 3 minuts
             if (timeRemaining <= 0)

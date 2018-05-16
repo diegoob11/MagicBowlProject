@@ -16,7 +16,9 @@ namespace UnityEngine.Networking
         private int maxIterations;
         public int minPlayersPerRoom;
         public bool startGame = false;
-        private int selectionIndex;
+        public int selectionIndex;
+
+        private bool listTheMatch = true;
 
         void Start()
         {
@@ -41,10 +43,13 @@ namespace UnityEngine.Networking
                     break;
             }
             maxIterations = 100;
+
         }
 
         void Update()
         {
+
+            
             // Si la lista de matches no es nula && Si el count de la lista de matches es mas grande que 0 &&
             // iterations es mas pequeño que maxIterations, cosa
             // que implica que lo acota a las primeras maxIterations interaciones, coge el primer match de la
@@ -64,7 +69,7 @@ namespace UnityEngine.Networking
                 //      0, manager.OnMatchCreate);
                 // matchFound = false;
 
-                // manager.matchMaker.ListMatches(0, 1, "", true, 0, 0, manager.OnMatchList);
+                manager.matchMaker.ListMatches(0, 1, "", true, 0, 0, manager.OnMatchList);
             }
             //Si ha hecho mas de maxIterations iteraciones, y no ha encontrado partida (matchFound == true), 
             // crea la partida.
@@ -82,6 +87,11 @@ namespace UnityEngine.Networking
             if (manager.numPlayers >= minPlayersPerRoom)
             {
                 startGame = true;
+                //Needed to destry the match
+                if(listTheMatch){
+                     manager.matchMaker.ListMatches(0, 1, "", true, 0, 0, manager.OnMatchList);
+                }
+                listTheMatch = false;
             }
 
             iterations++;
@@ -92,13 +102,13 @@ namespace UnityEngine.Networking
             if (player == GetServerPlayer())
             {
                 Debug.Log("Server player disconnected");
-                manager.matchMaker.DestroyMatch(manager.matches[0].networkId, 0, OnMatchDestroy);
+                manager.matchMaker.DestroyMatch(manager.matches[0].networkId, 0, OnDestroyMatch);
             }
         }
-
-        public void OnMatchDestroy(bool success, string extendedInfo)
+    
+        public void OnDestroyMatch(bool success, string extendedInfo)
         {
-            // ...
+            Debug.Log("MatchDestroyed");
         }
 
         public static NetworkPlayer GetServerPlayer()
@@ -110,6 +120,8 @@ namespace UnityEngine.Networking
             // not connected or not running as server
             return Network.connections[0];
         }
+
+      
     }
 };
 

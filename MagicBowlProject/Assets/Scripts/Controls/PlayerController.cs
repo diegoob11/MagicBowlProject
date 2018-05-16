@@ -45,7 +45,7 @@ public class PlayerController : NetworkBehaviour
     [SyncVar]
     public int gameStarted;
 
-
+    private bool serverNotSetted = true;
     void Start()
     {
         timer = GetComponent<Timer>();
@@ -79,7 +79,11 @@ public class PlayerController : NetworkBehaviour
 
     void Update()
     {
-
+        if(GameObject.Find("PanelPreferencesIngame") != null && serverNotSetted){
+            Debug.Log("SERVER CHECKED");
+            GameObject.Find("PanelPreferencesIngame").GetComponent<PauseMenu>().server = isServer;
+            serverNotSetted = false;
+        }
 
         if (isServer && globals.allowPlayerMovement)
         {
