@@ -14,11 +14,14 @@ public class GlobalVariables : MonoBehaviour
     public int currentSpawnedPlayer;
     public List<Transform> playerTransforms;
 
+
     public bool allowPlayerMovement;
     // Use this for initialization
     void Start()
     {
         customNetworkManager = networkManager.GetComponent<CustomNetworkManager>();
+
+
         allowPlayerMovement = false;
 
         tags = new List<string> { "PlayerPurple", "PlayerBlue", "PlayerGreen", "PlayerRed" };
