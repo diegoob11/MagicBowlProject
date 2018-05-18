@@ -7,7 +7,6 @@ public class FireballPlayer : NetworkBehaviour
 {
     public GameObject audioOnline;
     public GameObject particleSys; // The actual particle system for the spell
-    public int damage; // Amount of damage the fireball does
     private float angle;
 
     private void Update()
@@ -55,6 +54,7 @@ public class FireballPlayer : NetworkBehaviour
             GameObject audio = Instantiate(audioOnline) as GameObject;
             audio.GetComponent<AudioPlayerOnline>().playfire();
 
+            particleSys.GetComponent<FireballLifetime>().owner = gameObject.tag;
             GameObject particleSysNetwork = Instantiate(particleSys) as GameObject;
             particleSysNetwork.transform.eulerAngles = rotation;
             particleSysNetwork.transform.position = position;

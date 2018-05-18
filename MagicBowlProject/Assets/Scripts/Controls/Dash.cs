@@ -17,11 +17,15 @@ public class Dash : NetworkBehaviour, IPointerUpHandler, IPointerDownHandler {
     public float lockTime;
     private float timeLocked;
 
+    private PlayerController playerController;
+
     void Start()
     {
         buttonImg = gameObject.GetComponent<Image>();
         cooldownImg = transform.parent.Find("Cooldown").GetComponent<Image>();
         releasedImg = buttonImg.sprite;
+
+        playerController = transform.parent.transform.parent.transform.parent.GetComponent<PlayerController>();
 
         timeLocked = lockTime;
     }
@@ -47,7 +51,7 @@ public class Dash : NetworkBehaviour, IPointerUpHandler, IPointerDownHandler {
         if (!spellIsLocked)
         {
             buttonImg.sprite = releasedImg;
-            transform.parent.transform.parent.transform.parent.GetComponent<PlayerController>().isDashing = true;
+            playerController.isDashing = true;
             spellIsLocked = true;
             cooldownImg.enabled = true;
         }

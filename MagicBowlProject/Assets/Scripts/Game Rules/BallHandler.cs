@@ -48,7 +48,7 @@ public class BallHandler : NetworkBehaviour
         }
         ball.GetComponent<Rigidbody>().useGravity = false;
         ball.transform.SetParent(player.transform);
-        ball.transform.position = player.transform.position + new Vector3(0.0f, 2.0f, 0.0f);
+        ball.transform.position = player.transform.position + new Vector3(0.0f, 2.5f, 0.0f);
         hasTheBall = player.tag;
         ballIsGrabbed = true;
     }
@@ -69,7 +69,11 @@ public class BallHandler : NetworkBehaviour
             ball = GameObject.FindWithTag("Ball");
         }
         ball.transform.SetParent(null);
-        ball.transform.position -= new Vector3(1.0f, 0.0f, 0.0f);
+        Vector2 vec = new Vector2(10.0f, 10.0f);
+        while (Mathf.Abs(ball.transform.position.x + vec.x) >= 8 || Mathf.Abs( ball.transform.position.z + vec.y) >= 9) {
+            vec =  Random.insideUnitCircle;
+        }
+        ball.transform.position += new Vector3(vec.x, 0.2f, vec.y);
         ballIsGrabbed = false;
         hasTheBall = null;
     }

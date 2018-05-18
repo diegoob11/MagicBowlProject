@@ -56,6 +56,7 @@ public class PedradaPlayer : NetworkBehaviour
             GameObject audio = Instantiate(audioOnline) as GameObject;
             audio.GetComponent<AudioPlayerOnline>().playpedrada();
 
+            particleSys.GetComponent<PedradaLifetime>().owner = gameObject.tag;
             GameObject particleSysNetwork = Instantiate(particleSys) as GameObject;
             particleSysNetwork.transform.eulerAngles = rotation;
             particleSysNetwork.transform.position = position;

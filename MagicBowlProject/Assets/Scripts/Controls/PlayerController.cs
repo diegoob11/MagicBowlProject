@@ -117,7 +117,7 @@ public class PlayerController : NetworkBehaviour
             if (isDashing)
             {
                 Dash();
-                Invoke("DashReset", 0.05f);
+                Invoke("DashReset", 0.15f);
             }
             // Controls the behaviour of the player depending on if it's stunned.
             if (!isStunned)
@@ -210,8 +210,6 @@ public class PlayerController : NetworkBehaviour
                     animator.Play("Idle");
                     animator.SetBool("isRunning", isRunning);
                 }
-
-
             }
         }
     }
@@ -236,18 +234,18 @@ public class PlayerController : NetworkBehaviour
                 this.GetComponent<BallHandler>().hasTheBall != null)
             {
                 this.GetComponent<BallHandler>().CmdUngrabBall();
-                col.collider.GetComponent<BallHandler>().CmdGrabBall(col.collider.GetComponent<GameObject>());
+                // col.collider.GetComponent<BallHandler>().CmdGrabBall(col.collider.GetComponent<GameObject>());
             }
-
             // Get the direction of the other player 
-            Vector3 otherPos = col.collider.transform.position; // Collider's position
-            Vector3 myPos = transform.position; // My position
-            var heading = otherPos - myPos;
-            var distance = heading.magnitude;
-            var direction = heading / distance; // This is now the normalized direction.
-                                                // Move the player
-            Vector3 movement = new Vector3(-direction.x, 0.0f, -direction.y);
-            rigidBody.AddForce(movement * col.collider.GetComponent<PlayerController>().dashForce, ForceMode.Impulse);
+            // Vector3 otherPos = col.collider.transform.position; // Collider's position
+            // Vector3 myPos = transform.position; // My position
+            // var heading = otherPos - myPos;
+            // var distance = heading.magnitude;
+            // var direction = heading / distance; // This is now the normalized direction.
+            //                                     // Move the player
+            // Vector3 movement = new Vector3(-direction.x, 0.0f, -direction.y);
+            // rigidBody.AddForce(movement * col.collider.GetComponent<PlayerController>().dashForce,
+            //     ForceMode.Impulse);
             // Reduce Stamina on collision
             GetComponent<Stamina>().TakeDamage(col.collider.GetComponent<PlayerController>().force);
         }
@@ -275,13 +273,22 @@ public class PlayerController : NetworkBehaviour
         switch (other.tag)
         {
             case "FireBall":
-                GetComponent<Stamina>().TakeDamage(GetComponent<FireballPlayer>().damage);
+                if (isLocalPlayer && other.GetComponent<FireballLifetime>().owner != gameObject.tag)
+                {
+                    GetComponent<Stamina>().TakeDamage(other.GetComponent<FireballLifetime>().damage);
+                }
                 break;
             case "Avalanche":
-                GetComponent<Stamina>().TakeDamage(GetComponent<PedradaPlayer>().damage);
+                if (isLocalPlayer && other.GetComponent<PedradaLifetime>().owner != gameObject.tag)
+                {
+                    GetComponent<Stamina>().TakeDamage(other.GetComponent<PedradaLifetime>().damage);
+                }
                 break;
             case "Boulder":
-                GetComponent<Stamina>().TakeDamage(GetComponent<IndianaBolaPlayer>().damage);
+                if (isLocalPlayer && other.GetComponent<IndianaBolaLifetime>().owner != gameObject.tag)
+                {
+                    GetComponent<Stamina>().TakeDamage(other.GetComponent<IndianaBolaLifetime>().damage);
+                }
                 break;
         }
     }

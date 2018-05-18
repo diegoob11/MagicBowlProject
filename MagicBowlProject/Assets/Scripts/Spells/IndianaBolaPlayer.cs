@@ -53,9 +53,9 @@ public class IndianaBolaPlayer : NetworkBehaviour
         if (!(GetComponent<PlayerController>().isStunned))
         {
             GameObject audio = Instantiate(audioOnline) as GameObject;
-
             audio.GetComponent<AudioPlayerOnline>().playindiana();
 
+            particleSys.GetComponent<IndianaBolaLifetime>().owner = gameObject.tag;
             GameObject particleSysNetwork = Instantiate(particleSys) as GameObject;
             particleSysNetwork.transform.eulerAngles = rotation;
             particleSysNetwork.transform.position = position;

@@ -1,10 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Networking;
 
-public class FireballLifetime : MonoBehaviour
+public class IndianaBolaLifetime : MonoBehaviour
 {
+
     public int damage; // Amount of damage the fireball does
     private float age;
     public float maxLifeTime;
