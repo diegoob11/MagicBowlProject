@@ -12,7 +12,7 @@ public class CharacterCreation : MonoBehaviour
 
     public Image lockedMessage;
     public List<Image> stats;
-    public List<Image> names;
+    public List<GameObject> names;
 
     void Start()
     {
@@ -46,11 +46,11 @@ public class CharacterCreation : MonoBehaviour
             {
                 if (i == selectionIndex)
                 {
-                    names[i].enabled = true;
+                    names[i].SetActive(true);
                 }
                 else
                 {
-                    names[i].enabled = false;
+                    names[i].SetActive(false);
                 }
             }
 

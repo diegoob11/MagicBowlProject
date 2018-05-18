@@ -19,7 +19,8 @@ public class PlayerController : NetworkBehaviour
     private VirtualJoystick mover; // To get the input vector.
     public GameObject spellCanvasPrefab;
     private GameObject spellCanvas;
-    //public bool animationInProgress = false; //accessed by Timer.cs
+    public Image locator;
+
     private Timer timer;
     public int movementSpeed; // Movement speed.
     private int originalSpeed;
@@ -45,7 +46,7 @@ public class PlayerController : NetworkBehaviour
     [SyncVar]
     public int gameStarted;
 
-    private bool serverNotSetted = true;
+    private bool serverNotSet = true;
     void Start()
     {
         timer = GetComponent<Timer>();
@@ -74,18 +75,37 @@ public class PlayerController : NetworkBehaviour
         {
             spellCanvas = Instantiate(spellCanvasPrefab) as GameObject;
             spellCanvas.transform.SetParent(transform);
+
+            switch (tag)
+            {
+                case "PlayerPurple":
+                    locator.color = Color.magenta;
+                    break;
+                case "PlayerRed":
+                    locator.color = Color.red;
+                    break;
+                case "PlayerBlue":
+                    locator.color = Color.cyan;
+                    break;
+                case "PlayerGreen":
+                    locator.color = Color.green;
+                    break; ;
+            }
+
+            locator.enabled = true;
         }
     }
 
     void Update()
     {
-        if(GameObject.Find("PanelPreferencesIngame") != null && serverNotSetted){
+        if (GameObject.Find("PanelPreferencesIngame") != null && serverNotSet)
+        {
             Debug.Log("SERVER CHECKED");
             GameObject.Find("PanelPreferencesIngame").GetComponent<PauseMenu>().server = isServer;
-            serverNotSetted = false;
+            serverNotSet = false;
         }
 
-        if (isServer && globals.allowPlayerMovement) 
+        if (isServer && globals.allowPlayerMovement)
         {
             gameStarted = 1;
             //countdown.SetActive (true); //starts animation

@@ -21,7 +21,7 @@ public class LoadingScreen : MonoBehaviour {
 	private bool flagspell;
 	private bool flagspell2;
 
-	
+
 	void Start(){
 		flag = false;
 		flagspell = false;
@@ -96,19 +96,16 @@ public class LoadingScreen : MonoBehaviour {
 
 		}
 
-		if (!flagspell2 && flag && transform.childCount>=7) {
-			if (transform.GetChild (6).gameObject.transform.tag == "spellCanvas") {
-				flagspell2 = true;
-				spellCanvasPlayer = transform.GetChild (6).gameObject.GetComponent<CanvasGroup> ();
-				spellCanvasPlayer.alpha = 1;
-				spellCanvasPlayer.interactable = true;
-
-			}
-			
-
-		}
-
-	}
-
-
+        if (!flagspell2 && flag && transform.childCount >= 7)
+        {
+            if (transform.GetChild(transform.childCount - 1).gameObject.transform.tag == "spellCanvas")
+            {
+                flagspell2 = true;
+                spellCanvasPlayer = transform.GetChild(transform.childCount - 1).
+					gameObject.GetComponent<CanvasGroup>();
+                spellCanvasPlayer.alpha = 1;
+                spellCanvasPlayer.interactable = true;
+            }
+        }
+    }
 }

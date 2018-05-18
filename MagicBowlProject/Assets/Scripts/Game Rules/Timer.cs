@@ -10,7 +10,7 @@ public class Timer : NetworkBehaviour
     private CountdownFinished countEnd; //script
     private bool animationStart;
     private bool timeCounter;
-	private bool attackDisabled;
+    private bool attackDisabled;
     public GameObject countdown;
     private GameObject score;
     //public GameObject directional_light;
@@ -29,18 +29,13 @@ public class Timer : NetworkBehaviour
 
     void Start()
     {
-		attackDisabled = false;
-		timeCounter = false;
-		timerCanvas = transform.GetChild (3).gameObject;
+        attackDisabled = false;
+        timeCounter = false;
+        timerCanvas = transform.Find("Timer Canvas").gameObject;
         score = GameObject.Find("score");
         countEnd = countdown.GetComponent<CountdownFinished>();
         timeRemaining = 180;
         playerController = GetComponent<PlayerController>();
-		/*
-        if (isLocalPlayer)
-        {
-            timerCanvas.SetActive(true);
-        } */
     }
     void Update()
     {
@@ -80,24 +75,25 @@ public class Timer : NetworkBehaviour
             //acaba partida si passen 3 minuts
             if (timeRemaining <= 0)
             {
-				if (isServer) {
-					allowPlayerMovementTimer = false; //impedeix que pugui moure's
-				}
+                if (isServer)
+                {
+                    allowPlayerMovementTimer = false; //impedeix que pugui moure's
+                }
 
-				//impedeix que pugui atacar
-				if (!attackDisabled) {
-					foreach (Transform child in gameObject.transform) {
-						Debug.Log ("1");
-						if (child.gameObject.transform.tag == "spellCanvas") {
-							Debug.Log ("2");
-							attackDisabled = true;
-							CanvasGroup spellCanvasPlayer = child.gameObject.GetComponent<CanvasGroup> ();
-							spellCanvasPlayer.alpha = 0;
-							spellCanvasPlayer.interactable = false;
-
-						}
-					}
-				}
+                //impedeix que pugui atacar
+                if (!attackDisabled)
+                {
+                    foreach (Transform child in gameObject.transform)
+                    {
+                        if (child.gameObject.transform.tag == "spellCanvas")
+                        {
+                            attackDisabled = true;
+                            CanvasGroup spellCanvasPlayer = child.gameObject.GetComponent<CanvasGroup>();
+                            spellCanvasPlayer.alpha = 0;
+                            spellCanvasPlayer.interactable = false;
+                        }
+                    }
+                }
 
                 timeCounter = false;
                 //directional_light.GetComponent<Light> ().intensity = 0.1f;
@@ -109,50 +105,4 @@ public class Timer : NetworkBehaviour
             }
         }
     }
-
-    /*
-    public GameObject timerCanvas;
-
-    private float minutes;
-    private float seconds;
-
-    [SyncVar]
-    public float timeRemaining;
-
-    private PlayerController playerController;
-
-    void Start()
-    {
-
-        minutes = 3;
-        seconds = 0;
-        timeRemaining = 180;
-
-        playerController = GetComponent<PlayerController>();
-        if (isLocalPlayer)
-        {
-            timerCanvas.SetActive(true);
-        }
-    }
-    void Update()
-    {
-        if (isServer && playerController.gameStarted == 1)
-        {
-            timeRemaining -= Time.deltaTime;
-
-            if (timeRemaining <= 0)
-                FinishGame();
-        }
-
-        minutes = Mathf.Floor(timeRemaining / 60);
-        seconds = Mathf.Floor(timeRemaining % 60);
-        timerCanvas.transform.GetChild(0).GetComponent<Text>().text = minutes.ToString("00")
-             + ":" + seconds.ToString("00");
-    }
-
-    public void FinishGame()
-    {
-
-    }
-    */
 }
