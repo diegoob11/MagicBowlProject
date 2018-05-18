@@ -34,7 +34,7 @@ public class Timer : NetworkBehaviour
 		timerCanvas = transform.GetChild (3).gameObject;
         score = GameObject.Find("score");
         countEnd = countdown.GetComponent<CountdownFinished>();
-        timeRemaining = 10;
+        timeRemaining = 180;
         playerController = GetComponent<PlayerController>();
 		/*
         if (isLocalPlayer)
