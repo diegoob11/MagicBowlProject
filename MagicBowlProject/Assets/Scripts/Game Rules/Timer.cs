@@ -9,16 +9,18 @@ public class Timer : NetworkBehaviour
     //nota: els valors es tornen a reiniciar cada vegada que es carrega l'escena
     private CountdownFinished countEnd; //script
     private bool animationStart;
-    private bool timeCounter = false;
+    private bool timeCounter;
+	private bool attackDisabled;
     public GameObject countdown;
     private GameObject score;
     //public GameObject directional_light;
-    public GameObject timerCanvas;
+    private GameObject timerCanvas;
 
     private float minutes;
     private float seconds;
     [SyncVar]
     public float timeRemaining;
+
 
     [SyncVar]
     public bool allowPlayerMovementTimer; //accessed by PlayerController.cs
@@ -27,14 +29,18 @@ public class Timer : NetworkBehaviour
 
     void Start()
     {
+		attackDisabled = false;
+		timeCounter = false;
+		timerCanvas = transform.GetChild (3).gameObject;
         score = GameObject.Find("score");
         countEnd = countdown.GetComponent<CountdownFinished>();
-        timeRemaining = 180;
+        timeRemaining = 10;
         playerController = GetComponent<PlayerController>();
+		/*
         if (isLocalPlayer)
         {
             timerCanvas.SetActive(true);
-        }
+        } */
     }
     void Update()
     {
@@ -69,12 +75,30 @@ public class Timer : NetworkBehaviour
             float seconds = Mathf.Floor(timeRemaining % 60);
             string minutes2 = minutes.ToString("00");
             string seconds2 = seconds.ToString("00");
-            //timerCanvas.transform.GetChild(0).GetComponent<Text>().text = minutes2 + ":" + seconds2;
+            timerCanvas.transform.GetChild(1).GetComponent<Text>().text = minutes2 + ":" + seconds2; //accesses to Time
 
             //acaba partida si passen 3 minuts
             if (timeRemaining <= 0)
             {
-                allowPlayerMovementTimer = false;
+				if (isServer) {
+					allowPlayerMovementTimer = false; //impedeix que pugui moure's
+				}
+
+				//impedeix que pugui atacar
+				if (!attackDisabled) {
+					foreach (Transform child in gameObject.transform) {
+						Debug.Log ("1");
+						if (child.gameObject.transform.tag == "spellCanvas") {
+							Debug.Log ("2");
+							attackDisabled = true;
+							CanvasGroup spellCanvasPlayer = child.gameObject.GetComponent<CanvasGroup> ();
+							spellCanvasPlayer.alpha = 0;
+							spellCanvasPlayer.interactable = false;
+
+						}
+					}
+				}
+
                 timeCounter = false;
                 //directional_light.GetComponent<Light> ().intensity = 0.1f;
                 score.GetComponent<Animator>().Play("ShowResults");
