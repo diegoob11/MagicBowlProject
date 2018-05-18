@@ -1,32 +1,30 @@
 ﻿#if ENABLE_UNET
-
+using UnityEngine.SceneManagement;
 namespace UnityEngine.Networking
+
 {
     [AddComponentMenu("Network/NetworkManagerHUD")]
     [RequireComponent(typeof(NetworkManager))]
     [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
 
-    public class CustomNetworkManager : MonoBehaviour
+    public class CustomNetworkManager : NetworkBehaviour
     {
-
+        
         public NetworkManager manager;
         private bool matchFound;
         private bool disconnect;
         private int iterations;
         private int maxIterations;
         public int minPlayersPerRoom;
-
-
-		public bool startGame;
-
+        public bool startGame = false;
         public int selectionIndex;
 
-        private bool listTheMatch;
+        
+        private bool server;
+        private bool listTheMatch = true;
 
         void Start()
         {
-			startGame = false;
-			listTheMatch = true;
             matchFound = true;
             iterations = 0;
 
@@ -54,15 +52,16 @@ namespace UnityEngine.Networking
         void Update()
         {
 
-            
+        
             // Si la lista de matches no es nula && Si el count de la lista de matches es mas grande que 0 &&
             // iterations es mas pequeño que maxIterations, cosa
             // que implica que lo acota a las primeras maxIterations interaciones, coge el primer match de la
             // lista y la asigna al manager, se une.
             if (manager.matches != null && manager.matches.Count > 0 && matchFound &&
-                iterations < maxIterations)
+                iterations < maxIterations && manager.matches[0].currentSize < minPlayersPerRoom)
             {
                 matchFound = false;
+                
                 manager.matchName = manager.matches[0].name;
                 manager.matchSize = (uint)manager.matches[0].currentSize;
                 manager.matchMaker.JoinMatch(manager.matches[0].networkId, "", "", "", 0, 0,
@@ -104,17 +103,37 @@ namespace UnityEngine.Networking
 
         private void OnPlayerDisconnected(NetworkPlayer player)
         {
+            Debug.Log("ASDASDASD");
             if (player == GetServerPlayer())
             {
+                server = (player == GetServerPlayer());
                 Debug.Log("Server player disconnected");
                 manager.matchMaker.DestroyMatch(manager.matches[0].networkId, 0, OnDestroyMatch);
             }
         }
     
         public void OnDestroyMatch(bool success, string extendedInfo)
-        {
-            Debug.Log("MatchDestroyed");
-        }
+		{
+			if(server){
+				//Debug.Log("SERVER PLAYER DESTROYED");
+				// NetworkManager.singleton.StopHost(); 
+				// NetworkManager.singleton.StopMatchMaker(); 
+				// NetworkManager.Shutdown(); 
+				// Destroy(GameObject.Find("NetworkManager"));
+				// NetworkTransport.Shutdown();
+                // Destroy(GameObject.Find("mc"));
+			    // SceneManager.LoadScene("MainMenu");
+			}else{
+				//Debug.Log("CLIENT PLAYER DESTROYED");
+				// NetworkManager.singleton.StopMatchMaker();
+				// NetworkManager.Shutdown();
+				// Destroy(GameObject.Find("NetworkManager"));
+                // Destroy(GameObject.Find("mc"));
+			    // SceneManager.LoadScene("MainMenu");
+			}
+            
+		}
+       
 
         public static NetworkPlayer GetServerPlayer()
         {
