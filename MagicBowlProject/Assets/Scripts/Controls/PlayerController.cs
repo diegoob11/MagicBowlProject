@@ -85,7 +85,7 @@ public class PlayerController : NetworkBehaviour
             serverNotSetted = false;
         }
 
-        if (isServer && globals.allowPlayerMovement)
+        if (isServer && globals.allowPlayerMovement) 
         {
             gameStarted = 1;
             //countdown.SetActive (true); //starts animation

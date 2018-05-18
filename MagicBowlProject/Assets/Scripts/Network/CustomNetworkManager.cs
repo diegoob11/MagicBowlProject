@@ -15,13 +15,18 @@ namespace UnityEngine.Networking
         private int iterations;
         private int maxIterations;
         public int minPlayersPerRoom;
-        public bool startGame = false;
+
+
+		public bool startGame;
+
         public int selectionIndex;
 
-        private bool listTheMatch = true;
+        private bool listTheMatch;
 
         void Start()
         {
+			startGame = false;
+			listTheMatch = true;
             matchFound = true;
             iterations = 0;
 

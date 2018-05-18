@@ -7,37 +7,104 @@ using UnityEngine.SceneManagement;
 
 public class LoadingScreen : MonoBehaviour {
 
-	public GameObject network;
+	private PlayerController playerController;
 	private CustomNetworkManager net;
-	public GameObject mainCamera;
-	public GameObject loadingCamera;
-	public GameObject HUDCanvas;
-	public GameObject loadingCanvas;
+	private GameObject mainCamera;
+	private GameObject HUDCanvas;
+	private GameObject load;
+	private CanvasGroup staminaCanvasPlayer;
+	private CanvasGroup HUDCanvasPlayer;
+	private CanvasGroup countdownCanvasPlayer;
+	private CanvasGroup timerCanvasPlayer;
+	private CanvasGroup spellCanvasPlayer;
+	private bool flag;
+	private bool flagspell;
+	private bool flagspell2;
+
 	
 	void Start(){
-		net = network.GetComponent<CustomNetworkManager> ();
+		flag = false;
+		flagspell = false;
+		flagspell2 = false;
+		playerController = GetComponent<PlayerController> ();
+		mainCamera = GameObject.Find ("Main Camera");
+		load = GameObject.Find ("Load");
+		//loadingCamera = load.transform.GetChild(0).gameObject;
+		HUDCanvas=GameObject.Find ("HUDCanvas");
+		//loadingCanvas = load.transform.GetChild(1).gameObject;
+		staminaCanvasPlayer=transform.GetChild(2).gameObject.GetComponent<CanvasGroup> ();
+		HUDCanvasPlayer=transform.GetChild(4).gameObject.GetComponent<CanvasGroup> ();
+		timerCanvasPlayer=transform.GetChild(3).gameObject.GetComponent<CanvasGroup> ();
+		countdownCanvasPlayer=transform.GetChild(5).gameObject.GetComponent<CanvasGroup> ();
+		//net = network.GetComponent<CustomNetworkManager> ();
+		mainCamera.GetComponent<Camera>().enabled=false;
+
+		//makes canvas invisible
+		staminaCanvasPlayer.alpha = 0;
+		staminaCanvasPlayer.interactable = false;
+		HUDCanvasPlayer.alpha = 0;
+		HUDCanvasPlayer.interactable = false;
+		timerCanvasPlayer.alpha = 0;
+		timerCanvasPlayer.interactable = false;
+		countdownCanvasPlayer.alpha = 0;
+		countdownCanvasPlayer.interactable = false;
+
 
 
 	}
 
 
 	void Update () {
-		
-		if (net.startGame) {
-			
+
+		if (!flag && !flagspell && transform.childCount>=7) { //spellCanvas ja existeix
+			if (transform.GetChild (6).gameObject.transform.tag == "spellCanvas") { //spellCanvas han de tenir el tag
+				spellCanvasPlayer = transform.GetChild (6).gameObject.GetComponent<CanvasGroup> ();
+				spellCanvasPlayer.alpha = 0;
+				spellCanvasPlayer.interactable = false;
+				flagspell = true;
+
+			}
+
+		}
+
+		if (!flag && playerController.gameStarted==1) {
+			flag = true;
+
+
+
 			//shows hudcanvas
-			loadingCanvas.SetActive(false);
 			CanvasGroup group = HUDCanvas.GetComponent<CanvasGroup> ();
 			group.alpha = 1;
 			group.interactable = true;
+			staminaCanvasPlayer.alpha = 1;
+			staminaCanvasPlayer.interactable = true;
+			HUDCanvasPlayer.alpha = 1;
+			HUDCanvasPlayer.interactable = true;
+			timerCanvasPlayer.alpha = 1;
+			timerCanvasPlayer.interactable = true;
+			countdownCanvasPlayer.alpha = 1;
+			countdownCanvasPlayer.interactable = true;
+
+
+
+
+			load.SetActive (false); //deactivates Loading camera and LoadingCanvas
 
 			//changes camera
-			loadingCamera.SetActive(false);
-			mainCamera.SetActive (true);
+			mainCamera.GetComponent<Camera>().enabled=true;
 
 
+		}
 
+		if (!flagspell2 && flag && transform.childCount>=7) {
+			if (transform.GetChild (6).gameObject.transform.tag == "spellCanvas") {
+				flagspell2 = true;
+				spellCanvasPlayer = transform.GetChild (6).gameObject.GetComponent<CanvasGroup> ();
+				spellCanvasPlayer.alpha = 1;
+				spellCanvasPlayer.interactable = true;
 
+			}
+			
 
 		}
 
