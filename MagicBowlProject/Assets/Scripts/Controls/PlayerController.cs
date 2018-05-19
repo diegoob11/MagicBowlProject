@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 using UnityEngine.Networking;
 
@@ -102,6 +103,8 @@ public class PlayerController : NetworkBehaviour
         {
             Debug.Log("SERVER CHECKED");
             GameObject.Find("PanelPreferencesIngame").GetComponent<PauseMenu>().server = isServer;
+            GameObject.Find("PanelPreferencesIngame").GetComponent<PauseMenu>().myPlayer = this;
+
             serverNotSet = false;
         }
 
@@ -146,7 +149,34 @@ public class PlayerController : NetworkBehaviour
             }
         }
     }
-
+    //Funcion que se llama en todos los jugadores, clientes y host
+    [ClientRpc]
+    public void RpcKickEveryone(){
+        NetworkManager m = GameObject.Find("NetworkManager").GetComponent<CustomNetworkManager>().manager;
+        if(isServer){
+            m.matchMaker.DestroyMatch(m.matches[0].networkId, 0, OnDestroyMatch1);
+        }else{
+            m.matchMaker.DestroyMatch(m.matches[0].networkId, 0, OnDestroyMatch2);
+        }
+		Destroy(GameObject.Find("mc"));
+		SceneManager.LoadScene("MainMenu");  
+    }
+    //OnDestroyMatch Para el Servidor
+    public void OnDestroyMatch1(bool success, string extendedInfo){		
+		Debug.Log("SERVER PLAYER DESTROYED");
+		NetworkManager.singleton.StopHost(); 
+		NetworkManager.singleton.StopMatchMaker(); 
+		NetworkManager.Shutdown(); 
+		Destroy(GameObject.Find("NetworkManager"));
+		NetworkTransport.Shutdown();
+	}
+    //OnDestroyMatch Para el Cliente
+    public void OnDestroyMatch2(bool success, string extendedInfo){
+		Debug.Log("CLIENT PLAYER DESTROYED");
+		NetworkManager.singleton.StopMatchMaker();
+		NetworkManager.Shutdown();
+		Destroy(GameObject.Find("NetworkManager"));
+	}
     private void DashReset()
     {
         isDashing = false;
