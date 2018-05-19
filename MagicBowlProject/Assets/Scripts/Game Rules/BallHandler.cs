@@ -73,7 +73,7 @@ public class BallHandler : NetworkBehaviour
         while (Mathf.Abs(ball.transform.position.x + vec.x) >= 8 || Mathf.Abs( ball.transform.position.z + vec.y) >= 9) {
             vec =  Random.insideUnitCircle;
         }
-        ball.transform.position += new Vector3(vec.x, 0.2f, vec.y);
+        ball.transform.position -= new Vector3(vec.x, 0.5f, vec.y);
         ballIsGrabbed = false;
         hasTheBall = null;
     }
