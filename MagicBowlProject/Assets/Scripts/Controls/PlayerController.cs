@@ -33,7 +33,7 @@ public class PlayerController : NetworkBehaviour
     //public GameObject countdown;
 
     public float stunTime; // Time the player will be stunned.
-    public bool isStunned = false; // Says whether the player is stunned.
+    public bool isStunned; // Says whether the player is stunned.
 
     // Unity coroutines
     private IEnumerator speedDown;
@@ -128,16 +128,17 @@ public class PlayerController : NetworkBehaviour
                 // Moves the player
                 Move();
                 // Controls the stamina
-                if (GetComponent<Stamina>().GetCurrentStamina() <= 0)
-                    isStunned = true;
+                // if (GetComponent<Stamina>().GetCurrentStamina() <= 0)
+                //     isStunned = true;
             }
             else
             {
                 // Stun the player
-                isStunned = true;
+                // isStunned = true;
                 stunEnu = DoStun();
                 // Player loses the ball if on possession.
-                if (tag == GetComponent<BallHandler>().hasTheBall && GetComponent<BallHandler>().hasTheBall != null)
+                if (tag == GetComponent<BallHandler>().hasTheBall &&
+                    GetComponent<BallHandler>().hasTheBall != null)
                 {
                     GetComponent<BallHandler>().CmdUngrabBall();
                 }
@@ -151,32 +152,41 @@ public class PlayerController : NetworkBehaviour
     }
     //Funcion que se llama en todos los jugadores, clientes y host
     [ClientRpc]
-    public void RpcKickEveryone(){
+    public void RpcKickEveryone()
+    {
         NetworkManager m = GameObject.Find("NetworkManager").GetComponent<CustomNetworkManager>().manager;
-        if(isServer){
+        if (isServer)
+        {
             m.matchMaker.DestroyMatch(m.matches[0].networkId, 0, OnDestroyMatch1);
-        }else{
+        }
+        else
+        {
             m.matchMaker.DestroyMatch(m.matches[0].networkId, 0, OnDestroyMatch2);
         }
-		Destroy(GameObject.Find("mc"));
-		SceneManager.LoadScene("MainMenu");  
+        Destroy(GameObject.Find("mc"));
+        SceneManager.LoadScene("MainMenu");
     }
+
     //OnDestroyMatch Para el Servidor
-    public void OnDestroyMatch1(bool success, string extendedInfo){		
-		Debug.Log("SERVER PLAYER DESTROYED");
-		NetworkManager.singleton.StopHost(); 
-		NetworkManager.singleton.StopMatchMaker(); 
-		NetworkManager.Shutdown(); 
-		Destroy(GameObject.Find("NetworkManager"));
-		NetworkTransport.Shutdown();
-	}
+    public void OnDestroyMatch1(bool success, string extendedInfo)
+    {
+        Debug.Log("SERVER PLAYER DESTROYED");
+        NetworkManager.singleton.StopHost();
+        NetworkManager.singleton.StopMatchMaker();
+        NetworkManager.Shutdown();
+        Destroy(GameObject.Find("NetworkManager"));
+        NetworkTransport.Shutdown();
+    }
+
     //OnDestroyMatch Para el Cliente
-    public void OnDestroyMatch2(bool success, string extendedInfo){
-		Debug.Log("CLIENT PLAYER DESTROYED");
-		NetworkManager.singleton.StopMatchMaker();
-		NetworkManager.Shutdown();
-		Destroy(GameObject.Find("NetworkManager"));
-	}
+    public void OnDestroyMatch2(bool success, string extendedInfo)
+    {
+        Debug.Log("CLIENT PLAYER DESTROYED");
+        NetworkManager.singleton.StopMatchMaker();
+        NetworkManager.Shutdown();
+        Destroy(GameObject.Find("NetworkManager"));
+    }
+
     private void DashReset()
     {
         isDashing = false;
@@ -255,27 +265,18 @@ public class PlayerController : NetworkBehaviour
 
     void OnCollisionEnter(Collision col)
     {
+        if (!isLocalPlayer)
+        {
+            return;
+        }
         // When hit by another player that is dashing and this player is not
-        if (col.collider.gameObject.tag.Contains("Player") &&
-            col.collider.gameObject.GetComponent<PlayerController>().isDashing)
+        if (col.gameObject.tag.Contains("Player"))
         {
             // Player loses the ball if on possession.
-            if (tag == this.GetComponent<BallHandler>().hasTheBall &&
-                this.GetComponent<BallHandler>().hasTheBall != null)
-            {
-                this.GetComponent<BallHandler>().CmdUngrabBall();
-                // col.collider.GetComponent<BallHandler>().CmdGrabBall(col.collider.GetComponent<GameObject>());
-            }
-            // Get the direction of the other player 
-            // Vector3 otherPos = col.collider.transform.position; // Collider's position
-            // Vector3 myPos = transform.position; // My position
-            // var heading = otherPos - myPos;
-            // var distance = heading.magnitude;
-            // var direction = heading / distance; // This is now the normalized direction.
-            //                                     // Move the player
-            // Vector3 movement = new Vector3(-direction.x, 0.0f, -direction.y);
-            // rigidBody.AddForce(movement * col.collider.GetComponent<PlayerController>().dashForce,
-            //     ForceMode.Impulse);
+            // if (tag == GetComponent<BallHandler>().hasTheBall && GetComponent<BallHandler>().hasTheBall != null)
+            // {
+            //     GetComponent<BallHandler>().CmdUngrabBall();
+            // }
             // Reduce Stamina on collision
             GetComponent<Stamina>().TakeDamage(col.collider.GetComponent<PlayerController>().force);
         }

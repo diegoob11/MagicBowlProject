@@ -26,8 +26,10 @@ public class FireballPlayer : NetworkBehaviour
 
     public void Aim(float angle)
     {
+        float a = angle;
         particleSys.transform.eulerAngles = new Vector3(18, angle + 90, 0);
-        particleSys.transform.position = transform.position + new Vector3(0, 1, 0);
+        Vector3 offset = new Vector3(Mathf.Cos(Mathf.Deg2Rad * a), 1.0f, Mathf.Sin(Mathf.Deg2Rad * a) * -1);
+        particleSys.transform.position = transform.position + offset;
     }
 
     public void PlayFireball()

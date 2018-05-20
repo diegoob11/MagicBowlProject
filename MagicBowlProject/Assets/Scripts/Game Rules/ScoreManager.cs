@@ -10,7 +10,8 @@ public class ScoreManager : NetworkBehaviour
 
     private void OnTriggerEnter(Collider col)
     {
-        if (isLocalPlayer && GetComponent<BallHandler>().ballIsGrabbed && col.tag.Contains("Keep") && !col.tag.Contains(tag))
+        if (isLocalPlayer && GetComponent<BallHandler>().ballIsGrabbed && col.tag.Contains("Keep") &&
+             !col.tag.Contains(tag))
         {
             score++;
             GetComponent<BallHandler>().CmdRespawnBall();

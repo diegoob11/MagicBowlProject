@@ -33,13 +33,16 @@ public class Stamina : NetworkBehaviour
     public void TakeDamage(int amount)
     {
         currentStamina -= amount;
-        if (currentStamina < 0)
+        if (currentStamina < 0) {
             currentStamina = 0;
+            if (isLocalPlayer) GetComponent<PlayerController>().isStunned = true;
+        }
     }
 
     public void StopStun()
     {
         currentStamina = 1;
+        if (isLocalPlayer) GetComponent<PlayerController>().isStunned = false;
     }
 
     void OnChangeStamina(float stamina)

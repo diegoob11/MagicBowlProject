@@ -56,7 +56,7 @@ public class BallHandler : NetworkBehaviour
     // This method is called on the host, and makes the player ungrab the ball - if he has it
     [Command]
     public void CmdUngrabBall()
-    { 
+    {
         RpcUngrabBall();
     }
 
@@ -69,11 +69,17 @@ public class BallHandler : NetworkBehaviour
             ball = GameObject.FindWithTag("Ball");
         }
         ball.transform.SetParent(null);
-        Vector2 vec = new Vector2(10.0f, 10.0f);
-        while (Mathf.Abs(ball.transform.position.x + vec.x) >= 8 || Mathf.Abs( ball.transform.position.z + vec.y) >= 9) {
-            vec =  Random.insideUnitCircle;
+        if (ball.transform.position.x >= 0)
+        {
+            ball.transform.position -= new Vector3(1.5f, 0.0f, 0.0f);
         }
-        ball.transform.position -= new Vector3(vec.x, 0.5f, vec.y);
+        else
+        {
+            ball.transform.position += new Vector3(1.5f, 0.0f, 0.0f);
+        }
+        Vector3 newPos = ball.transform.position;
+        newPos.y = 0.5f;
+        ball.transform.position = newPos;
         ballIsGrabbed = false;
         hasTheBall = null;
     }
