@@ -6,7 +6,7 @@ using UnityEngine.UI; // Required when Using UI elements.
 public class AudioVolume : MonoBehaviour {
 	//Nota: es fica dins el slider de musica
 
-	AudioSource initialsong;
+	public AudioSource initialsong;
 	public Slider sliderMusic;
 
 	void Awake (){ //es crida quan s'executa l'script per 1r cop
