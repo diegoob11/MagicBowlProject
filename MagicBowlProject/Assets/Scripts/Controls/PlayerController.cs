@@ -92,7 +92,6 @@ public class PlayerController : NetworkBehaviour
                     locator.color = Color.green;
                     break; ;
             }
-
             locator.enabled = true;
         }
     }
@@ -111,8 +110,6 @@ public class PlayerController : NetworkBehaviour
         if (isServer && globals.allowPlayerMovement)
         {
             gameStarted = 1;
-            //countdown.SetActive (true); //starts animation
-            //animationInProgress = true;
         }
 
         if (isLocalPlayer)
@@ -127,14 +124,9 @@ public class PlayerController : NetworkBehaviour
             {
                 // Moves the player
                 Move();
-                // Controls the stamina
-                // if (GetComponent<Stamina>().GetCurrentStamina() <= 0)
-                //     isStunned = true;
             }
             else
             {
-                // Stun the player
-                // isStunned = true;
                 stunEnu = DoStun();
                 // Player loses the ball if on possession.
                 if (tag == GetComponent<BallHandler>().hasTheBall &&
@@ -201,13 +193,10 @@ public class PlayerController : NetworkBehaviour
     //This function is called when a player is stunned
     private IEnumerator DoStun()
     {
-        while (true)
-        {
-            yield return new WaitForSeconds(stunTime);
-            // Stun time is over.
-            isStunned = false;
-            GetComponent<Stamina>().StopStun();
-        }
+        yield return new WaitForSeconds(stunTime);
+        // Stun time is over.
+        isStunned = false;
+        GetComponent<Stamina>().StopStun();
     }
 
     private void Dash()
@@ -256,19 +245,12 @@ public class PlayerController : NetworkBehaviour
 
     private IEnumerator ReduceSpeed(float waitTime)
     {
-        while (true)
-        {
-            yield return new WaitForSeconds(waitTime);
-            movementSpeed = originalSpeed;
-        }
+        yield return new WaitForSeconds(waitTime);
+        movementSpeed = originalSpeed;
     }
 
     void OnCollisionEnter(Collision col)
     {
-        if (!isLocalPlayer)
-        {
-            return;
-        }
         // When hit by another player that is dashing and this player is not
         if (col.gameObject.tag.Contains("Player"))
         {
@@ -287,7 +269,7 @@ public class PlayerController : NetworkBehaviour
         switch (other.tag)
         {
             case "Ice":
-                if (isLocalPlayer && other.GetComponent<IceLifetime>().owner != gameObject.tag)
+                if (other.GetComponent<IceLifetime>().owner != gameObject.tag)
                 {
                     speedDown = ReduceSpeed(5.0f);
                     movementSpeed = movementSpeed / 2;
@@ -304,19 +286,19 @@ public class PlayerController : NetworkBehaviour
         switch (other.tag)
         {
             case "FireBall":
-                if (isLocalPlayer && other.GetComponent<FireballLifetime>().owner != gameObject.tag)
+                if (other.GetComponent<FireballLifetime>().owner != gameObject.tag)
                 {
                     GetComponent<Stamina>().TakeDamage(other.GetComponent<FireballLifetime>().damage);
                 }
                 break;
             case "Avalanche":
-                if (isLocalPlayer && other.GetComponent<PedradaLifetime>().owner != gameObject.tag)
+                if (other.GetComponent<PedradaLifetime>().owner != gameObject.tag)
                 {
                     GetComponent<Stamina>().TakeDamage(other.GetComponent<PedradaLifetime>().damage);
                 }
                 break;
             case "Boulder":
-                if (isLocalPlayer && other.GetComponent<IndianaBolaLifetime>().owner != gameObject.tag)
+                if (other.GetComponent<IndianaBolaLifetime>().owner != gameObject.tag)
                 {
                     GetComponent<Stamina>().TakeDamage(other.GetComponent<IndianaBolaLifetime>().damage);
                 }

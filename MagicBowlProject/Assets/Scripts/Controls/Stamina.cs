@@ -7,7 +7,8 @@ using UnityEngine.Networking;
 public class Stamina : NetworkBehaviour
 {
     public float maxStamina;
-    [SyncVar(hook = "OnChangeStamina")] public float currentStamina;
+    [SyncVar(hook = "OnChangeStamina")]
+    public float currentStamina;
     public float recoverySpeed;
     public Image staminaBar;
     private PlayerController playerController;
@@ -18,22 +19,25 @@ public class Stamina : NetworkBehaviour
     }
 
     void Update()
-    {
-        if (!GetComponent<PlayerController>().isStunned && (currentStamina < maxStamina))
+    {   
+        // if (!isServer)
+        //     return;
+
+        if (currentStamina < maxStamina)
         {
             currentStamina += recoverySpeed * Time.deltaTime;
+            if (currentStamina > maxStamina) currentStamina = maxStamina;
         }
-    }
-
-    public float GetCurrentStamina()
-    {
-        return currentStamina;
     }
 
     public void TakeDamage(int amount)
     {
+        // if (!isServer)
+        //     return;
+
         currentStamina -= amount;
-        if (currentStamina < 0) {
+        if (currentStamina < 0)
+        {
             currentStamina = 0;
             if (isLocalPlayer) GetComponent<PlayerController>().isStunned = true;
         }
@@ -41,7 +45,10 @@ public class Stamina : NetworkBehaviour
 
     public void StopStun()
     {
-        currentStamina = 1;
+        // if (!isServer)
+        //     return;
+
+        currentStamina = 10;
         if (isLocalPlayer) GetComponent<PlayerController>().isStunned = false;
     }
 
