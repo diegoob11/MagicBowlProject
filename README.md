@@ -1,6 +1,6 @@
 # Magic Bowl by FloatingFactory
-Find more info at: https://www.dropbox.com/sh/vblqbee7boldqcj/AAAq2cPJ08xQPI1iaryoItvya?dl=0
-Gameplay video: https://www.youtube.com/watch?v=gzdsBRiAvXU&feature=youtu.be 
+* Find more info at: https://www.dropbox.com/sh/vblqbee7boldqcj/AAAq2cPJ08xQPI1iaryoItvya?dl=0
+* Gameplay video: https://youtu.be/7WMRAl6YPiM
 
 ## About the game
 Magic Bowl is a multiplayer mobile phone game made with Unity Engine. 
