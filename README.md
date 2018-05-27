@@ -1,5 +1,5 @@
 # Magic Bowl by FloatingFactory
-* Find more info at: https://www.dropbox.com/sh/vblqbee7boldqcj/AAAq2cPJ08xQPI1iaryoItvya?dl=0
+* Find more info at: https://www.dropbox.com/s/fgukjovrn9lrrx8/Magic%20Bowl%20GDD.pdf?dl=0
 * Gameplay video: https://youtu.be/7WMRAl6YPiM
 
 ## About the game
